@@ -21,27 +21,43 @@
         /// <returns>The settings.</returns>
         public InvoiceGeneratorSettings GetSettings()
         {
-            var ConfigSettings = new InvoiceGeneratorSettings(
-                ConfigurationSettings.AppSettings.Get("OutputDirectory"))
-            {
-                OriginalTemplateFilePath = ConfigurationSettings.AppSettings.Get("InvoiceTemplate"),
-                DetailsFilePath = ConfigurationSettings.AppSettings.Get("InputFile"),
-                InvoiceNumberFormat = ConfigurationSettings.AppSettings.Get("InvoiceNumberFormat"),
-            };
-
-            int billNumber;
-
             if (!int.TryParse(
-                ConfigurationSettings.AppSettings.Get("FirstInvoiceNumber"),
-                out billNumber))
+                ConfigurationManager.AppSettings.Get("FirstInvoiceNumber"),
+                out int firstInvoiceNumber))
             {
                 this.Logger.LogWarning(
-                    "Unable to read FirstBillNumber from config. Starting with 1");
+                    "Unable to parse FirstBillNumber from config. Starting with 1.");
             }
 
-            ConfigSettings.FirstInvoiceNumber = billNumber;
-            return ConfigSettings;
+            var settings = new InvoiceGeneratorSettings(
+                outputDirectory: this.GetConfigurationSetting("OutputDirectory"),
+                originalTemplateFilePath: this.GetConfigurationSetting("InvoiceTemplate"),
+                detailsFilePath: this.GetConfigurationSetting("InputFile"),
+                invoiceNumberFormat: this.GetConfigurationSetting("InvoiceNumberFormat"),
+                firstInvoiceNumber: firstInvoiceNumber);
 
+            return settings;
+        }
+
+        /// <summary>
+        /// Gets configuration setting.
+        /// </summary>
+        /// <param name="settingName">Setting name.</param>
+        /// <returns>Value of setting.</returns>
+        /// <exception cref="Exception">Not found exception.</exception>
+        private string GetConfigurationSetting(string settingName)
+        {
+            string? settingValue = ConfigurationManager.AppSettings.Get(settingName);
+            if (!string.IsNullOrWhiteSpace(settingValue))
+            {
+                return settingValue;
+            }
+            else
+            {
+                string message = $"Unable to find {settingName} in config settings.";
+                this.Logger.LogError(message);
+                throw new Exception(message);
+            }
         }
     }
 }

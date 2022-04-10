@@ -56,18 +56,17 @@
             this.CloneTemplateFile();
             int invoiceNumber = settings.FirstInvoiceNumber;
             this.Logger.LogInfo(
-                $"Found template invoice, starting generation of receipts from {invoiceNumber}");
+                $"Generating all Excel invoices at {this.settings.ExcelOutputDirectory}");
+
+            this.Logger.LogInfo(
+                $"Generating all PDF invoices at {this.settings.PdfOutputDirectory}");
 
             int successfulInvoices = 0;
             foreach (Appartement appart in appartments)
             {
                 try
                 {
-                    var parameters = new InvoiceParameters
-                    {
-                        Details = appart,
-                        InvoiceNumber = invoiceNumber
-                    };
+                    var parameters = new InvoiceParameters(invoiceNumber, appart);
 
                     this.GenerateInvoiceForAppartement(parameters);
                     successfulInvoices++;

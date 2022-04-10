@@ -5,6 +5,20 @@
     /// </summary>
     internal class Appartement
     {
+        public Appartement(
+            string appNumber, 
+            string owner, 
+            string occupant, 
+            double squareFootage, 
+            double dues)
+        {
+            this.Id = appNumber;
+            this.Owner = owner;
+            this.Occupant = occupant;
+            this.SquareFootage = squareFootage;
+            this.Dues = dues;
+        }
+
         /// <summary>
         /// Gets or sets Unique Appartement Id.
         /// </summary>

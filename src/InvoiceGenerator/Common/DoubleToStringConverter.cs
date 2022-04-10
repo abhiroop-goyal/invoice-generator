@@ -135,46 +135,20 @@
             }
             else if (amount < 1000)
             {
-                List<string> parts = new List<string>();
-                parts.Add(this.GetOnesDigit(amount / 100));
-                parts.Add("Hundred");
-                parts.Add(this.GetStringRepresentation(amount % 100));
-                return this.JoinStrings(parts);
+                List<string> parts = new List<string>
+                {
+                    this.GetOnesDigit(amount / 100),
+                    "Hundred",
+                    this.GetStringRepresentation(amount % 100)
+                };
+
+                return JoinStrings(parts);
             }
             else
             {
-                int length = amount.ToString().Length;
-                int key = ((length / 2) * 2) - 1;
-                int div = (int)Math.Pow(10, key);
                 IEnumerable<string> parts = this.ProcessLargeNumber(amount);
-
-                return this.JoinStrings(parts);
+                return JoinStrings(parts);
             }
-            //else if (amount < 100000)
-            //{
-            //    parts.AddRange(
-            //        this.GetDoubleDigitRepresentation(
-            //            amount, 
-            //            1000, 
-            //            "Thousand"));
-            //}
-            //else if (amount < 10000000)
-            //{
-            //    parts.AddRange(
-            //        this.GetDoubleDigitRepresentation(
-            //            amount,
-            //            100000,
-            //            "Lakhs"));
-            //}
-            //else if (amount < 1000000000)
-            //{
-            //    parts.AddRange(
-            //        this.GetDoubleDigitRepresentation(
-            //            amount,
-            //            10000000,
-            //            "Crores"));
-            //}
-
         }
 
         /// <summary>
@@ -240,8 +214,7 @@
                 int tensDigit = (amount / 10) * 10;
                 items.Add(this.tensDigit[tensDigit]);
                 items.Add(this.GetOnesDigit(amount % 10));
-                var aa = this.JoinStrings(items);
-                return aa;
+                return JoinStrings(items);
             }
         }
 
@@ -250,10 +223,9 @@
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
-        private string JoinStrings(IEnumerable<string> items)
+        private static string JoinStrings(IEnumerable<string> items)
         {
             return string.Join(' ', items.Where(x => !string.IsNullOrWhiteSpace(x)));
         }
-
     }
 }

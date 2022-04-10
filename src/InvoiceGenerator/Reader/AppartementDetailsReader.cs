@@ -65,19 +65,21 @@
         /// </summary>
         /// <param name="row">Excel row.</param>
         /// <returns>The details.</returns>
-        public Appartement ParseRow(IRow row)
+        public Appartement? ParseRow(IRow row)
         {
-            Appartement app = null;
+            Appartement? app = null;
             if (row.Cells.Count >= 4)
             {
-                app = new Appartement
-                {
-                    Id = row.Cells[0].ToString(),
-                    Owner = row.Cells[1].ToString(),
-                    Occupant = row.Cells[2].ToString(),
-                    SquareFootage = row.Cells[3].NumericCellValue,
-                    Dues = row.Cells[4].NumericCellValue
-                };
+                #pragma warning disable CS8604 // Possible null reference argument.
+                
+                app = new Appartement(
+                    appNumber: row.Cells[0].ToString(),
+                    owner: row.Cells[1].ToString(),
+                    occupant: row.Cells[2].ToString(),
+                    squareFootage: row.Cells[3].NumericCellValue,
+                    dues: row.Cells[4].NumericCellValue);
+                
+                #pragma warning restore CS8604 // Possible null reference argument.
             }
             else
             {
