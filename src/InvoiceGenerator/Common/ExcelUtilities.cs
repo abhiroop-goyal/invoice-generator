@@ -1,11 +1,13 @@
 ﻿namespace InvoiceGenerator
 {
+    using System.Drawing.Printing;
     using NPOI.XSSF.UserModel;
+    using Spire.Xls;
 
     /// <summary>
     /// Excel utilities.
     /// </summary>
-    internal class ExcelUtilities : BaseClass
+    public class ExcelUtilities : BaseClass
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ExcelUtilities"/> class.
@@ -53,6 +55,25 @@
             workbook.Write(fileStream);
             fileStream.Close();
             workbook.Close();
+        }
+
+        /// <summary>
+        /// Print an excel file to PDF.
+        /// </summary>
+        /// <param name="inputFilePath">Input file path.</param>
+        /// <param name="outputPath">Output file path.</param>
+        public void PrintToPDF(string inputFilePath, string outputPath)
+        {
+            Workbook workbook = new Workbook();
+            workbook.LoadFromFile(inputFilePath);
+            PrintDocument pd = workbook.PrintDocument;
+            pd.PrinterSettings.PrinterName = "Microsoft Print to PDF";
+
+            // tell the object this document will print to file
+            pd.PrinterSettings.PrintToFile = true;
+            // set the filename to whatever you like (full path)
+            pd.PrinterSettings.PrintFileName = Path.Combine(outputPath);
+            pd.Print();
         }
     }
 }

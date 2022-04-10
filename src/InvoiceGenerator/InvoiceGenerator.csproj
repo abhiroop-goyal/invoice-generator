@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FreeSpire.XLS" Version="12.2.0" />
     <PackageReference Include="NPOI" Version="2.5.5" />
   </ItemGroup>
 

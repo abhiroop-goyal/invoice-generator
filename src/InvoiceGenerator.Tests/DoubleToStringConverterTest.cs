@@ -6,7 +6,7 @@ namespace InvoiceGenerator.Tests
     public class DoubleToStringConverterTest
     {
         [TestMethod]
-        public void TestM2ethod1()
+        public void AmountToWordsTest()
         {
             var converter = new DoubleToStringConverter(Logger.Instance);
             Assert.IsTrue(converter.GetAmountInWords(0) == "Zero Rupees");

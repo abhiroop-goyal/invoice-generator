@@ -21,9 +21,9 @@
         /// <returns>The settings.</returns>
         public InvoiceGeneratorSettings GetSettings()
         {
-            var ConfigSettings = new InvoiceGeneratorSettings
+            var ConfigSettings = new InvoiceGeneratorSettings(
+                ConfigurationSettings.AppSettings.Get("OutputDirectory"))
             {
-                OutputDirectory = ConfigurationSettings.AppSettings.Get("OutputDirectory"),
                 OriginalTemplateFilePath = ConfigurationSettings.AppSettings.Get("InvoiceTemplate"),
                 DetailsFilePath = ConfigurationSettings.AppSettings.Get("InputFile"),
                 InvoiceNumberFormat = ConfigurationSettings.AppSettings.Get("InvoiceNumberFormat"),

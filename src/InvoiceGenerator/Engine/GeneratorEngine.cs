@@ -84,7 +84,7 @@
             }
 
             this.Logger.LogInfo($"Successfully created {successfulInvoices} invoices.");
-            this.CleanuTemporaryTemplateFile();
+            this.CleanupTemporaryTemplateFile();
         }
 
         /// <summary>
@@ -115,7 +115,7 @@
         /// <summary>
         /// Clone template file for working.
         /// </summary>
-        private void CleanuTemporaryTemplateFile()
+        private void CleanupTemporaryTemplateFile()
         {
             if (File.Exists(settings.TemplateFilePath))
             {
@@ -131,9 +131,41 @@
         /// <param name="parameters">Invoice parameters.</param>
         private void GenerateInvoiceForAppartement(InvoiceParameters parameters)
         {
-            string outFilePath = parameters.GetInvoicePath(
-                this.settings.OutputDirectory);
+            string invoiceFileName = parameters.GetInvoiceFileName();
+            string excelInvoicePath = string.Format(
+                "{0}\\{1}.xlsx",
+                this.settings.ExcelOutputDirectory,
+                invoiceFileName);
 
+            this.GenerateExcelInvoice(parameters, excelInvoicePath);
+
+            string pdfInvoicePath = string.Format(
+                "{0}\\{1}.pdf",
+                this.settings.PdfOutputDirectory,
+                invoiceFileName);
+
+            try
+            {
+                this.excelUtilities.PrintToPDF(excelInvoicePath, pdfInvoicePath);
+            }
+            catch (Exception ex)
+            {
+                this.Logger.LogError(
+                    $"Unable to generate PDF invoice for {parameters.Details.Id}");
+
+                this.Logger.LogError(ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Generate invoice for single appartement.
+        /// </summary>
+        /// <param name="parameters">Invoice parameters.</param>
+        /// <param name="outFilePath">Excel invoice path.</param>
+        private void GenerateExcelInvoice(
+            InvoiceParameters parameters,
+            string outFilePath)
+        {
             XSSFWorkbook workbook = this.excelUtilities.OpenExcelWorkbook(
                 this.settings.TemplateFilePath);
 
@@ -143,7 +175,6 @@
             workSheet.GetRow(9).Cells[2].SetCellValue(parameters.Details.Owner);
             workSheet.GetRow(10).Cells[2].SetCellValue(parameters.Details.Occupant);
             workSheet.GetRow(11).Cells[2].SetCellValue(parameters.Details.Id);
-
 
             string invoiceNumber = string.Format(
                 this.settings.InvoiceNumberFormat,

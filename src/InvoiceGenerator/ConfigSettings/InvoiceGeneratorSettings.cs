@@ -1,12 +1,30 @@
-﻿using System.Configuration;
-
-namespace InvoiceGenerator
+﻿namespace InvoiceGenerator
 {
     /// <summary>
     /// Invoice generation settings.
     /// </summary>
-    internal class InvoiceGeneratorSettings 
+    internal class InvoiceGeneratorSettings
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvoiceGeneratorSettings"/> class.
+        /// </summary>
+        /// <param name="outputDirectory"></param>
+        public InvoiceGeneratorSettings(string outputDirectory)
+        {
+            this.ExcelOutputDirectory = outputDirectory + "/Excel";
+            this.PdfOutputDirectory = outputDirectory + "/Pdf";
+
+            if (!Directory.Exists(this.ExcelOutputDirectory))
+            {
+                Directory.CreateDirectory(this.ExcelOutputDirectory);
+            }
+
+            if (!Directory.Exists(this.PdfOutputDirectory))
+            {
+                Directory.CreateDirectory(this.PdfOutputDirectory);
+            }
+        }
+
         /// <summary>
         /// Gets or sets firsst receipt number.
         /// </summary>
@@ -33,8 +51,13 @@ namespace InvoiceGenerator
         public string DetailsFilePath { get; set; }
 
         /// <summary>
-        /// Gets or sets output directory for generated invoices.
+        /// Gets or sets output directory for generated invoices in XLSX.
         /// </summary>
-        public string OutputDirectory { get; set; }
+        public string ExcelOutputDirectory { get; }
+
+        /// <summary>
+        /// Gets or sets output directory for generated invoices in PDF.
+        /// </summary>
+        public string PdfOutputDirectory { get; }
     }
 }
