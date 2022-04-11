@@ -15,6 +15,6 @@
         /// Settings provider.
         /// </summary>
         public static ISettingsProvider Instance 
-            = new AppConfigSettingsProvider(Logger.Instance);
+            = new JSONConfigSettingsProvider(Logger.Instance);
     }
 }

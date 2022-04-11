@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -13,14 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="FreeSpire.XLS" Version="12.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NPOI" Version="2.5.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="*.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <!--<ExcludeFromSingleFile>true</ExcludeFromSingleFile>-->
-    </None>
   </ItemGroup>
 
 </Project>

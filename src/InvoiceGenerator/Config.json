@@ -1,0 +1,7 @@
+﻿{
+  "InputFile": "D:\\invoice-generator\\src\\Input\\AppartementInfo.xlsx",
+  "InvoiceTemplate": "D:\\invoice-generator\\src\\Input\\MasterTemplate.xlsx",
+  "OutputDirectory": "D:\\invoice-generator\\src\\Output",
+  "FirstInvoiceNumber": "53",
+  "InvoiceNumberFormat": "Cam/22-23/{0}",
+}

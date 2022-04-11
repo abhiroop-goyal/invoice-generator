@@ -1,17 +1,20 @@
 ﻿namespace InvoiceGenerator
 {
+    using Newtonsoft.Json;
     using System.Configuration;
 
     /// <summary>
-    /// App config settings provider.
+    /// JSON File config settings provider.
     /// </summary>
-    internal class AppConfigSettingsProvider : BaseClass, ISettingsProvider
+    internal class JSONConfigSettingsProvider : BaseClass, ISettingsProvider
     {
+        private Dictionary<string, string>? items;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="AppConfigSettingsProvider"/> class.
+        /// Initializes a new instance of the <see cref="JSONConfigSettingsProvider"/> class.
         /// </summary>
         /// <param name="_logger">Logger class.</param>
-        public AppConfigSettingsProvider(ILogger _logger) : base(_logger)
+        public JSONConfigSettingsProvider(ILogger _logger) : base(_logger)
         {
         }
 
@@ -21,6 +24,20 @@
         /// <returns>The settings.</returns>
         public InvoiceGeneratorSettings GetSettings()
         {
+            string filePath = Environment.GetCommandLineArgs()[1];
+            if (!File.Exists(filePath))
+            {
+                string message = $"Configuration file {filePath}, does not exist. " +
+                    $"Make sure that the file exists before proceeding";
+                
+                this.Logger.LogError(message);
+                throw new Exception(message);
+            }
+
+            string content = File.ReadAllText(filePath);
+            items = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                content);
+
             if (!int.TryParse(
                 this.GetConfigurationSetting("FirstInvoiceNumber"),
                 out int firstInvoiceNumber))
@@ -47,8 +64,9 @@
         /// <exception cref="Exception">Not found exception.</exception>
         private string GetConfigurationSetting(string settingName)
         {
-            string? settingValue = ConfigurationManager.AppSettings.Get(settingName);
-            if (!string.IsNullOrWhiteSpace(settingValue))
+            if (this.items != null
+                && this.items.TryGetValue(settingName, out string settingValue)
+                && !string.IsNullOrWhiteSpace(settingValue))
             {
                 return settingValue;
             }
