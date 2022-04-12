@@ -183,7 +183,7 @@
 
             // Calculation
             workSheet.GetRow(15).Cells[4].SetCellValue(parameters.Details.SquareFootage);
-            workSheet.GetRow(16).Cells[6].SetCellValue(parameters.Details.Dues);
+            workSheet.GetRow(20).Cells[6].SetCellValue(parameters.Details.Dues);
 
             // required as formulae are not auto-evaluated.
             XSSFFormulaEvaluator.EvaluateAllFormulaCells(workbook);
