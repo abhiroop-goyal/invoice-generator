@@ -8,7 +8,7 @@ namespace InvoiceGenerator.Tests
         [TestMethod]
         public void AmountToWordsTest()
         {
-            var converter = new DoubleToStringConverter(Logger.Instance);
+            var converter = new DoubleToStringConverter(new ConsoleLogger());
             Assert.IsTrue(converter.GetAmountInWords(0) == "Zero Rupees");
             Assert.IsTrue(converter.GetAmountInWords(0.05) == "Five Paise");
             Assert.IsTrue(converter.GetAmountInWords(0.5) == "Fifty Paise");

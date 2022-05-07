@@ -6,7 +6,7 @@
     /// <summary>
     /// Reader for details.
     /// </summary>
-    internal class AppartementDetailsReader : BaseClass
+    internal class AppartementDetailsReader : BaseClass, IAppartementDetailsReader
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AppartementDetailsReader"/> class.

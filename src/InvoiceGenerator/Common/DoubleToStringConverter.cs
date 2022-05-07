@@ -1,6 +1,6 @@
 ﻿namespace InvoiceGenerator
 {
-    public class DoubleToStringConverter : BaseClass
+    public class DoubleToStringConverter : BaseClass, IAmountToWords
     {
         /// <summary>
         /// Dictionary for single digit.

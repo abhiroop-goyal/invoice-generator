@@ -1,6 +1,17 @@
 ﻿using InvoiceGenerator;
-var settings = SettingsProvider.Instance.GetSettings();
-var appartementReader = new AppartementDetailsReader(Logger.Instance);
+using Microsoft.Extensions.DependencyInjection;
+
+var serviceProvider = new ServiceCollection()
+            .AddSingleton<ILogger, ConsoleLogger>()
+            .AddSingleton<IExcelUtilities, ExcelUtilities>()
+            .AddSingleton<IAmountToWords, DoubleToStringConverter>()
+            .AddSingleton<ISettingsProvider, JSONConfigSettingsProvider>()
+            .AddSingleton<IGeneratorEngine, GeneratorEngine>()
+            .AddSingleton<IAppartementDetailsReader, AppartementDetailsReader>()
+            .BuildServiceProvider();
+
+var settings = serviceProvider.GetService<ISettingsProvider>().GetSettings();
+var appartementReader = serviceProvider.GetService<IAppartementDetailsReader>();
 var apps = appartementReader.Execute(settings.DetailsFilePath);
-var generator = new GeneratorEngine(settings, apps, Logger.Instance);
-generator.Execute();
+var generator = serviceProvider.GetService<IGeneratorEngine>();
+generator.Execute(apps);

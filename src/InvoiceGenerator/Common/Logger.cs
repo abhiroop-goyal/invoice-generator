@@ -3,40 +3,29 @@
     using System;
 
     /// <summary>
-    /// Logger class.
+    /// Console logger.
     /// </summary>
-    public class Logger
+    public class ConsoleLogger : ILogger
     {
-        /// <summary>
-        /// Internal instance.
-        /// </summary>
-        public static ILogger Instance = new ConsoleLogger();
-
-        /// <summary>
-        /// Console logger.
-        /// </summary>
-        private class ConsoleLogger : ILogger
+        /// <inheritdoc/>
+        public void LogInfo(string message)
         {
-            /// <inheritdoc/>
-            public void LogInfo(string message)
-            {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(message);
-            }
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(message);
+        }
 
-            /// <inheritdoc/>
-            public void LogWarning(string message)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine(message);
-            }
+        /// <inheritdoc/>
+        public void LogWarning(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(message);
+        }
 
-            /// <inheritdoc/>
-            public void LogError(string message)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(message);
-            }
+        /// <inheritdoc/>
+        public void LogError(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
         }
     }
 

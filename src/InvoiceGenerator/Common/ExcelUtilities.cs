@@ -7,7 +7,7 @@
     /// <summary>
     /// Excel utilities.
     /// </summary>
-    public class ExcelUtilities : BaseClass
+    public class ExcelUtilities : BaseClass, IExcelUtilities
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ExcelUtilities"/> class.

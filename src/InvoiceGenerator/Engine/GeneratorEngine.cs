@@ -2,13 +2,12 @@
 {
     using System;
     using NPOI.SS.UserModel;
-    using NPOI.SS.Util;
     using NPOI.XSSF.UserModel;
 
     /// <summary>
     /// Invoice generator engine.
     /// </summary>
-    internal class GeneratorEngine : BaseClass
+    internal class GeneratorEngine : BaseClass, IGeneratorEngine
     {
         /// <summary>
         /// Common generation settings.
@@ -16,42 +15,39 @@
         private readonly InvoiceGeneratorSettings settings;
 
         /// <summary>
-        /// Appartement list.
+        /// Rupee converter.
         /// </summary>
-        private readonly List<Appartement> appartments;
+        private readonly IAmountToWords rupeeWordConverter;
 
         /// <summary>
         /// Excel utilties
         /// </summary>
-        private readonly ExcelUtilities excelUtilities;
-
-        /// <summary>
-        /// Excel utilties
-        /// </summary>
-        private readonly DoubleToStringConverter rupeeWordConverter;
+        private readonly IExcelUtilities excelUtilities;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneratorEngine"/> class.
         /// </summary>
-        /// <param name="_parameters">Parameters for generation.</param>
-        /// <param name="_apps">Appartement list.</param>
+        /// <param name="_settingsProvider">Parameters for generation.</param>
+        /// <param name="_excelUtilities">Excel utilities.</param>
+        /// <param name="_rupeeWordConverter">Rupee to word converter.</param>
         /// <param name="_logger">Logger class.</param>
         public GeneratorEngine(
-            InvoiceGeneratorSettings _parameters,
-            List<Appartement> _apps,
+            ISettingsProvider _settingsProvider,
+            IExcelUtilities _excelUtilities,
+            IAmountToWords _rupeeWordConverter,
             ILogger _logger) : base(_logger)
         {
-            this.settings = _parameters;
-            this.appartments = _apps;
-            this.excelUtilities = new ExcelUtilities(_logger);
-            this.rupeeWordConverter = new DoubleToStringConverter(_logger);
+            this.excelUtilities = _excelUtilities;
+            this.rupeeWordConverter = _rupeeWordConverter;
+            this.settings = _settingsProvider.GetSettings();
         }
 
         /// <summary>
         /// Execute generation.
         /// </summary>
+        /// <param name="appartments">Appartement list.</param>
         /// <exception cref="Exception">Not found.</exception>
-        public void Execute()
+        public void Execute(List<Appartement> appartments)
         {
             this.CloneTemplateFile();
             int invoiceNumber = settings.FirstInvoiceNumber;
