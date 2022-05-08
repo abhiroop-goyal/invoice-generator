@@ -51,7 +51,7 @@
             {
                 if (appartementInfo.ContainsKey(dueRecord.Id))
                 {
-                    appartementInfo[dueRecord.Id].SetPastDues(dueRecord, interestRate);
+                    appartementInfo[dueRecord.Id].SetPastDues(dueRecord);
                 }
                 else
                 {
@@ -97,7 +97,8 @@
                 appNumber: this.excelUtilities.GetStringCellValue(row, 0),
                 owner: this.excelUtilities.GetStringCellValue(row, 1),
                 occupant: this.excelUtilities.GetStringCellValue(row, 2),
-                squareFootage: this.excelUtilities.GetNumericalCellValue(row, 3));
+                squareFootage: this.excelUtilities.GetNumericalCellValue(row, 3),
+                chargePerUnit: this.excelUtilities.GetNumericalCellValue(row, 4));
         }
 
         /// <summary>

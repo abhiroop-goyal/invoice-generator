@@ -16,7 +16,7 @@ namespace InvoiceGenerator
             string outputDirectory,
             string pastDuesFilePath)
         {
-            this.InterestRateForPastDues = interestRateForPastDues;
+            this.DuesInterestRatePerAnnum = interestRateForPastDues;
             this.FirstInvoiceNumber = firstInvoiceNumber;
             this.InvoiceNumberFormat = invoiceNumberFormat;
             this.TemplateFilePath = originalTemplateFilePath;
@@ -46,11 +46,6 @@ namespace InvoiceGenerator
                 Directory.CreateDirectory(this.PdfOutputDirectory);
             }
         }
-
-        /// <summary>
-        /// Gets the interest rate for past dues.
-        /// </summary>
-        public int InterestRateForPastDues { get; }
 
         /// <summary>
         /// Gets or sets firsst receipt number.
@@ -85,6 +80,7 @@ namespace InvoiceGenerator
 
         /// <summary>
         /// Gets or sets per annum interest rate for past dues.
+        /// Currently not being used anywhere.
         /// </summary>
         public int DuesInterestRatePerAnnum { get; }
 

@@ -176,7 +176,9 @@
 
             // Calculation
             this.excelUtilities.SetCellValue(workSheet, 15, 4, parameters.Details.SquareFootage);
+            this.excelUtilities.SetCellValue(workSheet, 15, 5, parameters.Details.ChargePerUnit);
             this.excelUtilities.SetCellValue(workSheet, 20, 6, parameters.Details.Dues);
+            this.excelUtilities.SetCellValue(workSheet, 21, 3, parameters.Details.NumberOfDaysForPenalty);
 
             // required as formulae are not auto-evaluated.
             XSSFFormulaEvaluator.EvaluateAllFormulaCells(workbook);
