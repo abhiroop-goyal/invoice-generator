@@ -22,8 +22,4 @@
     <PackageReference Include="NPOI" Version="2.5.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ExcelUtilities\" />
-  </ItemGroup>
-
 </Project>
