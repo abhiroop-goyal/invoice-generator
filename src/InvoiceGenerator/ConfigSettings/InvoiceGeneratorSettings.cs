@@ -1,4 +1,6 @@
-﻿namespace InvoiceGenerator
+﻿using Newtonsoft.Json;
+
+namespace InvoiceGenerator
 {
     /// <summary>
     /// Invoice generation settings.
@@ -7,22 +9,31 @@
     {
         public InvoiceGeneratorSettings(
             int firstInvoiceNumber,
+            int interestRateForPastDues,
             string invoiceNumberFormat,
             string originalTemplateFilePath,
-            string detailsFilePath,
-            string outputDirectory)
+            string appartementDetailsFilePath,
+            string outputDirectory,
+            string pastDuesFilePath)
         {
+            this.InterestRateForPastDues = interestRateForPastDues;
             this.FirstInvoiceNumber = firstInvoiceNumber;
             this.InvoiceNumberFormat = invoiceNumberFormat;
-            this.OriginalTemplateFilePath = originalTemplateFilePath;
-            this.DetailsFilePath = detailsFilePath;
+            this.TemplateFilePath = originalTemplateFilePath;
+            this.AppartementDetailsFilePath = appartementDetailsFilePath;
+            this.OutputDirectory = outputDirectory;
+            this.PastDuesFilePath = pastDuesFilePath;
+            this.CreateDirectories();
+        }
 
-            this.ExcelOutputDirectory = outputDirectory + "/Excel";
-            this.PdfOutputDirectory = outputDirectory + "/Pdf";
-
-            if (!Directory.Exists(outputDirectory))
+        /// <summary>
+        /// Create output directories if they dont exist.
+        /// </summary>
+        private void CreateDirectories() 
+        { 
+            if (!Directory.Exists(this.OutputDirectory))
             {
-                Directory.CreateDirectory(outputDirectory);
+                Directory.CreateDirectory(this.OutputDirectory);
             }
 
             if (!Directory.Exists(this.ExcelOutputDirectory))
@@ -37,6 +48,11 @@
         }
 
         /// <summary>
+        /// Gets the interest rate for past dues.
+        /// </summary>
+        public int InterestRateForPastDues { get; }
+
+        /// <summary>
         /// Gets or sets firsst receipt number.
         /// </summary>
         public int FirstInvoiceNumber { get; }
@@ -49,26 +65,45 @@
         /// <summary>
         /// Gets or sets invoice template file path.
         /// </summary>
-        public string TemplateFilePath => "temp.xlsx";
+        [JsonIgnore]
+        public string IntermediateTemplateFilePath => "temp.xlsx";
 
         /// <summary>
         /// Gets or sets invoice template file path.
         /// </summary>
-        public string OriginalTemplateFilePath { get; }
+        public string TemplateFilePath { get; }
 
         /// <summary>
         /// Gets or sets appartement details file path.
         /// </summary>
-        public string DetailsFilePath { get; }
+        public string AppartementDetailsFilePath { get; }
+
+        /// <summary>
+        /// Gets or sets file path for past dues.
+        /// </summary>
+        public string PastDuesFilePath { get; }
+
+        /// <summary>
+        /// Gets or sets per annum interest rate for past dues.
+        /// </summary>
+        public int DuesInterestRatePerAnnum { get; }
 
         /// <summary>
         /// Gets or sets output directory for generated invoices in XLSX.
         /// </summary>
-        public string ExcelOutputDirectory { get; }
+        [JsonProperty]
+        public string OutputDirectory  { get; }
+
+        /// <summary>
+        /// Gets or sets output directory for generated invoices in XLSX.
+        /// </summary>
+        [JsonIgnore]
+        public string ExcelOutputDirectory => string.Concat(this.OutputDirectory, "/Excel");
 
         /// <summary>
         /// Gets or sets output directory for generated invoices in PDF.
         /// </summary>
-        public string PdfOutputDirectory { get; }
+        [JsonIgnore]
+        public string PdfOutputDirectory => string.Concat(this.OutputDirectory, "/Pdf");
     }
 }

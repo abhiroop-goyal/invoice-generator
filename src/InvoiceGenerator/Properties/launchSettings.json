@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "InvoiceGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\invoice-generator\\src\\InvoiceGenerator\\Config.json"
+    }
+  }
+}

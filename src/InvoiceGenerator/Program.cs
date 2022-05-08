@@ -1,7 +1,7 @@
 ﻿using InvoiceGenerator;
 using Microsoft.Extensions.DependencyInjection;
 
-var serviceProvider = new ServiceCollection()
+ServiceProvider serviceProvider = new ServiceCollection()
             .AddSingleton<ILogger, ConsoleLogger>()
             .AddSingleton<IExcelUtilities, ExcelUtilities>()
             .AddSingleton<IAmountToWords, DoubleToStringConverter>()
@@ -10,8 +10,14 @@ var serviceProvider = new ServiceCollection()
             .AddSingleton<IAppartementDetailsReader, AppartementDetailsReader>()
             .BuildServiceProvider();
 
-var settings = serviceProvider.GetService<ISettingsProvider>().GetSettings();
-var appartementReader = serviceProvider.GetService<IAppartementDetailsReader>();
-var apps = appartementReader.Execute(settings.DetailsFilePath);
-var generator = serviceProvider.GetService<IGeneratorEngine>();
+InvoiceGeneratorSettings settings = serviceProvider.GetService<ISettingsProvider>().GetSettings();
+
+IAppartementDetailsReader appartementReader = serviceProvider.GetService<IAppartementDetailsReader>();
+
+List<Appartement> apps = appartementReader.Execute(
+    settings.AppartementDetailsFilePath,
+    settings.PastDuesFilePath,
+    settings.DuesInterestRatePerAnnum);
+
+IGeneratorEngine generator = serviceProvider.GetService<IGeneratorEngine>();
 generator.Execute(apps);

@@ -77,11 +77,7 @@
             };
         }
 
-        /// <summary>
-        /// Get amount in words.
-        /// </summary>
-        /// <param name="amount">Amount.</param>
-        /// <returns>The string representation.</returns>
+        /// <inheritdoc/>
         public string GetAmountInWords(double amount)
         {
             bool isNegative = amount < 0;

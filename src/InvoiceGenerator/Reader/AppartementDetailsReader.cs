@@ -6,58 +6,78 @@
     /// <summary>
     /// Reader for details.
     /// </summary>
-    internal class AppartementDetailsReader : BaseClass, IAppartementDetailsReader
+    public class AppartementDetailsReader : BaseClass, IAppartementDetailsReader
     {
+        /// <summary>
+        /// Excel utilities.
+        /// </summary>
+        private IExcelUtilities excelUtilities;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AppartementDetailsReader"/> class.
         /// </summary>
         /// <param name="_logger">Logger class.</param>
-        public AppartementDetailsReader(ILogger _logger) : base(_logger)
+        public AppartementDetailsReader(
+            ILogger _logger,
+            IExcelUtilities excelUtilities) : base(_logger)
         {
+            this.excelUtilities = excelUtilities;
         }
 
-        /// <summary>
-        /// Execute action.
-        /// </summary>
-        /// <returns>A list of appartements.</returns>
-        /// <param name="inputFilePath">Input file path.</param>
-        /// <exception cref="Exception">File not found.</exception>
-        public List<Appartement> Execute(string inputFilePath)
+        /// <inheritdoc/>
+        public List<Appartement> Execute(
+            string inputFilePath,
+            string duesFilePath,
+            double interestRate)
         {
-            List<Appartement> appartments = new List<Appartement>();
-            this.Logger.LogInfo("Reading data of appartements from excel file.");
+            return this.CalculateSummary(
+                this.GetPastDues(duesFilePath),
+                this.GetAppartementDetails(inputFilePath),
+                interestRate);
+        }
 
-            IWorkbook? workbook = new ExcelUtilities(this.Logger).OpenExcelWorkbook(inputFilePath);
+        /// <inheritdoc/>
+        public List<Appartement> CalculateSummary(
+            List<AppartementPenalty> dues,
+            List<Appartement> appartementDetails,
+            double interestRate)
+        {
+            Dictionary<string, Appartement> appartementInfo =
+                appartementDetails
+                    .Where(item => item != null)
+                    .ToDictionary(item => item.Id, item => item);
 
-            try
+            foreach (AppartementPenalty dueRecord in dues)
             {
-                ISheet workSheet = workbook.GetSheetAt(0);
-                var rowIterator = workSheet.GetRowEnumerator();
-                rowIterator.MoveNext();
-                while (rowIterator.MoveNext())
+                if (appartementInfo.ContainsKey(dueRecord.Id))
                 {
-                    IRow row = (IRow)rowIterator.Current;
-                    var app = this.ParseRow(row);
-                    if (app != null)
-                    {
-                        appartments.Add(app);
-                    }
+                    appartementInfo[dueRecord.Id].SetPastDues(dueRecord, interestRate);
                 }
-
-                this.Logger.LogInfo(
-                    $"Successfully read data for {appartments.Count} appartements.");
-            }
-            catch (Exception ex)
-            {
-                this.Logger.LogError(ex.ToString());
-                throw;
-            }
-            finally
-            {
-                workbook?.Close();
+                else
+                {
+                    this.Logger.LogWarning($"Due record found for unknown appartement {dueRecord.Id}");
+                }
             }
 
-            return appartments;
+            return appartementInfo.Select(item => item.Value).ToList();
+        }
+
+        /// <inheritdoc/>
+        public List<AppartementPenalty> GetPastDues(string duesFilePath)
+        {
+            this.Logger.LogInfo("Reading data for past dues.");
+            return this.excelUtilities.ParseExcelFile(
+                duesFilePath,
+                this.ParseDuesRow);
+        }
+
+        /// <inheritdoc/>
+        public List<Appartement> GetAppartementDetails(string inputFilePath)
+        {
+            this.Logger.LogInfo("Reading data of appartements from excel file.");
+            return this.excelUtilities.ParseExcelFile<Appartement>(
+                inputFilePath,
+                this.ParseAppartementDetailsRow);
         }
 
         /// <summary>
@@ -65,28 +85,38 @@
         /// </summary>
         /// <param name="row">Excel row.</param>
         /// <returns>The details.</returns>
-        public Appartement? ParseRow(IRow row)
+        private Appartement ParseAppartementDetailsRow(IRow row)
         {
-            Appartement? app = null;
-            if (row.Cells.Count >= 4)
-            {
-                #pragma warning disable CS8604 // Possible null reference argument.
-                
-                app = new Appartement(
-                    appNumber: row.Cells[0].ToString(),
-                    owner: row.Cells[1].ToString(),
-                    occupant: row.Cells[2].ToString(),
-                    squareFootage: row.Cells[3].NumericCellValue,
-                    dues: row.Cells[4].NumericCellValue);
-                
-                #pragma warning restore CS8604 // Possible null reference argument.
-            }
-            else
+            if (row.Cells.Count < 3)
             {
                 this.Logger.LogWarning($"Invalid input in Row {row.RowNum}");
+                return null;
             }
 
-            return app;
+            return new Appartement(
+                appNumber: this.excelUtilities.GetStringCellValue(row, 0),
+                owner: this.excelUtilities.GetStringCellValue(row, 1),
+                occupant: this.excelUtilities.GetStringCellValue(row, 2),
+                squareFootage: this.excelUtilities.GetNumericalCellValue(row, 3));
+        }
+
+        /// <summary>
+        /// Parses the excel row for appartement details.
+        /// </summary>
+        /// <param name="row">Excel row.</param>
+        /// <returns>The details.</returns>
+        private AppartementPenalty ParseDuesRow(IRow row)
+        {
+            if (row.Cells.Count < 2)
+            {
+                this.Logger.LogWarning($"Invalid input in Row {row.RowNum}");
+                return null;
+            }
+
+            string id = this.excelUtilities.GetStringCellValue(row, 0);
+            double dueAmount = this.excelUtilities.GetNumericalCellValue(row, 1);
+            double elapsedDays = this.excelUtilities.GetNumericalCellValue(row, 2);
+            return new AppartementPenalty(id, dueAmount, elapsedDays);
         }
     }
 }

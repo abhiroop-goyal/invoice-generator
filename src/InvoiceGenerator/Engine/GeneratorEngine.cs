@@ -42,11 +42,7 @@
             this.settings = _settingsProvider.GetSettings();
         }
 
-        /// <summary>
-        /// Execute generation.
-        /// </summary>
-        /// <param name="appartments">Appartement list.</param>
-        /// <exception cref="Exception">Not found.</exception>
+        /// <inheritdoc/>
         public void Execute(List<Appartement> appartments)
         {
             this.CloneTemplateFile();
@@ -62,7 +58,7 @@
             {
                 try
                 {
-                    var parameters = new InvoiceParameters(invoiceNumber, appart);
+                    InvoiceParameters parameters = new InvoiceParameters(invoiceNumber, appart);
 
                     this.GenerateInvoiceForAppartement(parameters);
                     successfulInvoices++;
@@ -89,22 +85,22 @@
         private void CloneTemplateFile()
         {
             string errorMessage;
-            if (!File.Exists(settings.OriginalTemplateFilePath))
+            if (!File.Exists(settings.TemplateFilePath))
             {
-                errorMessage = $"File {this.settings.OriginalTemplateFilePath} does not exist";
+                errorMessage = $"File {this.settings.TemplateFilePath} does not exist";
                 this.Logger.LogError(errorMessage);
                 throw new Exception(errorMessage);
             }
 
             this.Logger.LogInfo(
-                $"Creating copy of template file for working {this.settings.TemplateFilePath}");
+                $"Creating copy of template file for working {this.settings.IntermediateTemplateFilePath}");
 
             XSSFWorkbook workbook = this.excelUtilities.OpenExcelWorkbook(
-                this.settings.OriginalTemplateFilePath);
+                this.settings.TemplateFilePath);
 
             this.excelUtilities.SaveAndCloseExcelFile(
                 workbook,
-                this.settings.TemplateFilePath);
+                this.settings.IntermediateTemplateFilePath);
         }
 
         /// <summary>
@@ -112,12 +108,12 @@
         /// </summary>
         private void CleanupTemporaryTemplateFile()
         {
-            if (File.Exists(settings.TemplateFilePath))
+            if (File.Exists(settings.IntermediateTemplateFilePath))
             {
-                this.Logger.LogInfo($"Deleting temp file {this.settings.TemplateFilePath}");
+                this.Logger.LogInfo($"Deleting temp file {this.settings.IntermediateTemplateFilePath}");
             }
 
-            File.Delete(settings.TemplateFilePath);
+            File.Delete(settings.IntermediateTemplateFilePath);
         }
 
         /// <summary>
@@ -162,30 +158,31 @@
             string outFilePath)
         {
             XSSFWorkbook workbook = this.excelUtilities.OpenExcelWorkbook(
-                this.settings.TemplateFilePath);
+                this.settings.IntermediateTemplateFilePath);
 
             ISheet workSheet = workbook.GetSheetAt(0);
 
             // Common Details of owner/appartement.
-            workSheet.GetRow(9).Cells[2].SetCellValue(parameters.Details.Owner);
-            workSheet.GetRow(10).Cells[2].SetCellValue(parameters.Details.Occupant);
-            workSheet.GetRow(11).Cells[2].SetCellValue(parameters.Details.Id);
+
+            this.excelUtilities.SetCellValue(workSheet, 9, 2, parameters.Details.Owner);
+            this.excelUtilities.SetCellValue(workSheet, 10, 2, parameters.Details.Occupant);
+            this.excelUtilities.SetCellValue(workSheet, 11, 2, parameters.Details.Id);
 
             string invoiceNumber = string.Format(
                 this.settings.InvoiceNumberFormat,
                 parameters.InvoiceNumber);
 
-            workSheet.GetRow(9).Cells[5].SetCellValue(invoiceNumber);
+            this.excelUtilities.SetCellValue(workSheet, 9, 5, invoiceNumber);
 
             // Calculation
-            workSheet.GetRow(15).Cells[4].SetCellValue(parameters.Details.SquareFootage);
-            workSheet.GetRow(20).Cells[6].SetCellValue(parameters.Details.Dues);
+            this.excelUtilities.SetCellValue(workSheet, 15, 4, parameters.Details.SquareFootage);
+            this.excelUtilities.SetCellValue(workSheet, 20, 6, parameters.Details.Dues);
 
             // required as formulae are not auto-evaluated.
             XSSFFormulaEvaluator.EvaluateAllFormulaCells(workbook);
 
             // Set total value in words.
-            double amount = workSheet.GetRow(24).Cells[6].NumericCellValue;
+            double amount = this.excelUtilities.GetNumericalCellValue(workSheet, 24, 6);
             string amountInWords = string.Empty;
             try
             {
@@ -197,7 +194,7 @@
                 this.Logger.LogError(ex.ToString());
             }
 
-            workSheet.GetRow(25).Cells[2].SetCellValue(amountInWords);
+            this.excelUtilities.SetCellValue(workSheet, 25, 2, amountInWords);
             this.excelUtilities.SaveAndCloseExcelFile(workbook, outFilePath);
         }
     }

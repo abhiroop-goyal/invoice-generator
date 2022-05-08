@@ -39,19 +39,36 @@
                 content);
 
             if (!int.TryParse(
-                this.GetConfigurationSetting("FirstInvoiceNumber"),
+                this.GetConfigurationSetting(nameof(InvoiceGeneratorSettings.FirstInvoiceNumber)),
                 out int firstInvoiceNumber))
             {
+                firstInvoiceNumber = 1;
                 this.Logger.LogWarning(
                     "Unable to parse FirstBillNumber from config. Starting with 1.");
             }
 
-            var settings = new InvoiceGeneratorSettings(
-                outputDirectory: this.GetConfigurationSetting("OutputDirectory"),
-                originalTemplateFilePath: this.GetConfigurationSetting("InvoiceTemplate"),
-                detailsFilePath: this.GetConfigurationSetting("InputFile"),
-                invoiceNumberFormat: this.GetConfigurationSetting("InvoiceNumberFormat"),
-                firstInvoiceNumber: firstInvoiceNumber);
+            if (!int.TryParse(
+                this.GetConfigurationSetting(nameof(InvoiceGeneratorSettings.DuesInterestRatePerAnnum)),
+                out int interestRateForPastDues))
+            {
+                interestRateForPastDues = 5;
+                this.Logger.LogWarning(
+                    $"Unable to parse {nameof(InvoiceGeneratorSettings.DuesInterestRatePerAnnum)} from config. Defaulting to 5%.");
+            }
+
+            InvoiceGeneratorSettings settings = new InvoiceGeneratorSettings(
+                appartementDetailsFilePath: this.GetConfigurationSetting(
+                    nameof(InvoiceGeneratorSettings.AppartementDetailsFilePath)),
+                pastDuesFilePath: this.GetConfigurationSetting(
+                    nameof(InvoiceGeneratorSettings.PastDuesFilePath)),
+                originalTemplateFilePath: this.GetConfigurationSetting(
+                    nameof(InvoiceGeneratorSettings.TemplateFilePath)),
+                outputDirectory: this.GetConfigurationSetting(
+                    nameof(InvoiceGeneratorSettings.OutputDirectory)),
+                firstInvoiceNumber: firstInvoiceNumber,
+                interestRateForPastDues: interestRateForPastDues,
+                invoiceNumberFormat: this.GetConfigurationSetting(
+                    nameof(InvoiceGeneratorSettings.InvoiceNumberFormat)));
 
             return settings;
         }

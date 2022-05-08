@@ -1,23 +1,47 @@
 ﻿namespace InvoiceGenerator
 {
     using System;
-    using NPOI.SS.UserModel;
 
-    interface IAppartementDetailsReader
+    public interface IAppartementDetailsReader
     {
         /// <summary>
         /// Execute action.
         /// </summary>
         /// <returns>A list of appartements.</returns>
         /// <param name="inputFilePath">Input file path.</param>
+        /// <param name="duesFilePath">Dues file path.</param>
+        /// <param name="interestRate">Rate of iterest.</param>
         /// <exception cref="Exception">File not found.</exception>
-        List<Appartement> Execute(string inputFilePath);
+        public List<Appartement> Execute(
+            string inputFilePath,
+            string duesFilePath,
+            double interestRate);
 
         /// <summary>
-        /// Parses the excel row for appartement details.
+        /// Calculate summary of amount for all appartements..
         /// </summary>
-        /// <param name="row">Excel row.</param>
-        /// <returns>The details.</returns>
-        Appartement? ParseRow(IRow row);
+        /// <returns>A list of appartements.</returns>
+        /// <param name="dues">Past due amounts.</param>
+        /// <param name="appartementDetails">Appartement details.</param>
+        /// <param name="interestRate">Rate of iterest.</param>
+        /// <exception cref="Exception">File not found.</exception>
+        public List<Appartement> CalculateSummary(
+            List<AppartementPenalty> dues,
+            List<Appartement> appartementDetails,
+            double interestRate);
+
+        /// <summary>
+        /// Get outstanding due amounts.
+        /// </summary>
+        /// <returns>A list of appartements with their past dues.</returns>
+        /// <param name="duesFilePath">Input file path.</param>
+        public List<AppartementPenalty> GetPastDues(string duesFilePath);
+
+        /// <summary>
+        /// Get all appartement details.
+        /// </summary>
+        /// <returns>A list of appartements.</returns>
+        /// <param name="inputFilePath">Input file path.</param>
+        public List<Appartement> GetAppartementDetails(string inputFilePath);
     }
 }
