@@ -18,9 +18,9 @@
         {
             return new List<Appartement>
             {
-                new Appartement("1", "John", "Tenant", 2000),
-                new Appartement("2", "Adam", "Tenant", 2000),
-                new Appartement("3", "Rishi", "Tenant", 2000),
+                new Appartement("1", "John", "Tenant", 2000, 1),
+                new Appartement("2", "Adam", "Tenant", 2000, 1),
+                new Appartement("3", "Rishi", "Tenant", 2000, 1),
             };
         }
     }

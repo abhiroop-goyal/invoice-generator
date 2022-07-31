@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 
@@ -28,7 +30,8 @@ namespace InvoiceGenerator.Tests
         /// <summary>
         /// Excel utilities.
         /// </summary>
-        private readonly ExcelUtilities utilities = new ExcelUtilities(new ConsoleLogger());
+        private readonly ExcelUtilities utilities = new ExcelUtilities(
+                new Mock<ILogger<ExcelUtilities>>().Object);
 
         [TestMethod]
         public void ReadAndWriteNumberTest()

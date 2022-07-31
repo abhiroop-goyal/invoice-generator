@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NPOI.SS.UserModel;
@@ -14,7 +16,7 @@ namespace InvoiceGenerator.Tests
     {
         private const string ApptFileName = "apps";
         private const string DuesFileName = "dues";
-        private const double InterestRate = 10;
+        private const int InterestRate = 10;
 
         public AppartementDetailsReaderTest()
         {
@@ -40,29 +42,31 @@ namespace InvoiceGenerator.Tests
                         It.IsAny<Func<IRow, AppartementPenalty>>()))
                 .Returns(TestDataGenerator.GetFakeAppartementDuesList());
 
+            var settingsMock = new InvoiceGeneratorSettings()
+            {
+                AppartementDetailsFilePath = "dummy",
+                PastDuesFilePath = "dummy",
+                DuesInterestRatePerAnnum = InterestRate
+            };
+
+            var optionsMock = new Mock<IOptions<InvoiceGeneratorSettings>>();
+            optionsMock.SetupGet(x => x.Value).Returns(settingsMock);
+
             reader = new AppartementDetailsReader(
-                new ConsoleLogger(),
+                new Mock<ILogger<AppartementDetailsReader>>().Object,
+                optionsMock.Object,
                 excelUtilsMock.Object);
 
-            List<Appartement> results = reader.Execute(
-                "Dummy",
-                "Dummy",
-                InterestRate);
+            List<Appartement> results = reader.Execute();
 
             Dictionary<string, Appartement> dues = results.ToDictionary(
                 item => item.Id,
                 item => item);
 
             Assert.IsTrue(results.Count == 3);
-            Assert.IsTrue(dues["2"].Dues == 0);
             Assert.IsTrue(dues["3"].Dues == 0);
             Assert.IsTrue(!dues.ContainsKey("4"));
             Assert.IsTrue(dues["1"].Dues != 0);
-        }
-
-        private static ILogger GetLogger()
-        {
-            return new ConsoleLogger();
         }
     }
 }

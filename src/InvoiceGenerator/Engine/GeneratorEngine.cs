@@ -2,6 +2,7 @@
 {
     using System;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using NPOI.SS.UserModel;
     using NPOI.XSSF.UserModel;
 
@@ -38,7 +39,7 @@
         /// <param name="_rupeeWordConverter">Rupee to word converter.</param>
         /// <param name="_logger">Logger class.</param>
         public GeneratorEngine(
-            ISettingsProvider _settingsProvider,
+            IOptions<InvoiceGeneratorSettings> _settingsProvider,
             IExcelUtilities _excelUtilities,
             IAmountToWords _rupeeWordConverter,
             ILogger<GeneratorEngine> _logger)
@@ -46,7 +47,7 @@
             this.Logger = _logger;
             this.excelUtilities = _excelUtilities;
             this.rupeeWordConverter = _rupeeWordConverter;
-            this.settings = _settingsProvider.GetSettings();
+            this.settings = _settingsProvider.Value;
         }
 
         /// <inheritdoc/>

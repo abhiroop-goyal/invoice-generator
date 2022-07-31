@@ -5,32 +5,13 @@ namespace InvoiceGenerator
     /// <summary>
     /// Invoice generation settings.
     /// </summary>
-    internal class InvoiceGeneratorSettings
+    public class InvoiceGeneratorSettings
     {
-        public InvoiceGeneratorSettings(
-            int firstInvoiceNumber,
-            int interestRateForPastDues,
-            string invoiceNumberFormat,
-            string originalTemplateFilePath,
-            string appartementDetailsFilePath,
-            string outputDirectory,
-            string pastDuesFilePath)
-        {
-            this.DuesInterestRatePerAnnum = interestRateForPastDues;
-            this.FirstInvoiceNumber = firstInvoiceNumber;
-            this.InvoiceNumberFormat = invoiceNumberFormat;
-            this.TemplateFilePath = originalTemplateFilePath;
-            this.AppartementDetailsFilePath = appartementDetailsFilePath;
-            this.OutputDirectory = outputDirectory;
-            this.PastDuesFilePath = pastDuesFilePath;
-            this.CreateDirectories();
-        }
-
         /// <summary>
         /// Create output directories if they dont exist.
         /// </summary>
-        private void CreateDirectories() 
-        { 
+        public void CreateDirectories()
+        {
             if (!Directory.Exists(this.OutputDirectory))
             {
                 Directory.CreateDirectory(this.OutputDirectory);
@@ -50,12 +31,12 @@ namespace InvoiceGenerator
         /// <summary>
         /// Gets or sets firsst receipt number.
         /// </summary>
-        public int FirstInvoiceNumber { get; }
+        public int FirstInvoiceNumber { get; set; }
 
         /// <summary>
         /// Gets or sets the invoice number format.
         /// </summary>
-        public string InvoiceNumberFormat { get; }
+        public string InvoiceNumberFormat { get; set; }
 
         /// <summary>
         /// Gets or sets invoice template file path.
@@ -66,29 +47,29 @@ namespace InvoiceGenerator
         /// <summary>
         /// Gets or sets invoice template file path.
         /// </summary>
-        public string TemplateFilePath { get; }
+        public string TemplateFilePath { get; set; }
 
         /// <summary>
         /// Gets or sets appartement details file path.
         /// </summary>
-        public string AppartementDetailsFilePath { get; }
+        public string AppartementDetailsFilePath { get; set; }
 
         /// <summary>
         /// Gets or sets file path for past dues.
         /// </summary>
-        public string PastDuesFilePath { get; }
+        public string PastDuesFilePath { get; set; }
 
         /// <summary>
         /// Gets or sets per annum interest rate for past dues.
         /// Currently not being used anywhere.
         /// </summary>
-        public int DuesInterestRatePerAnnum { get; }
+        public int DuesInterestRatePerAnnum { get; set; }
 
         /// <summary>
         /// Gets or sets output directory for generated invoices in XLSX.
         /// </summary>
         [JsonProperty]
-        public string OutputDirectory  { get; }
+        public string OutputDirectory { get; set; }
 
         /// <summary>
         /// Gets or sets output directory for generated invoices in XLSX.

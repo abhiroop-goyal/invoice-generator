@@ -1,11 +1,19 @@
 ﻿using InvoiceGenerator;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
+
+string configFileName = args[0];
+
+// Dependency builder.
+var configurationBuild = new ConfigurationBuilder()
+    .AddJsonFile(configFileName, optional: false, reloadOnChange: true)
+    .Build();
 
 ServiceProvider serviceProvider = new ServiceCollection()
             .AddSingleton<IExcelUtilities, ExcelUtilities>()
             .AddSingleton<IAmountToWords, DoubleToStringConverter>()
-            .AddSingleton<ISettingsProvider, JSONConfigSettingsProvider>()
             .AddSingleton<IGeneratorEngine, GeneratorEngine>()
             .AddSingleton<IAppartementDetailsReader, AppartementDetailsReader>()
             .AddLogging((builder) =>
@@ -13,16 +21,10 @@ ServiceProvider serviceProvider = new ServiceCollection()
                 builder.ClearProviders();
                 builder.AddConsole();
             })
+            .AddOptions()
+            .Configure<InvoiceGeneratorSettings>(configurationBuild)
             .BuildServiceProvider();
 
-InvoiceGeneratorSettings settings = serviceProvider.GetService<ISettingsProvider>().GetSettings();
-
-IAppartementDetailsReader appartementReader = serviceProvider.GetService<IAppartementDetailsReader>();
-
-List<Appartement> apps = appartementReader.Execute(
-    settings.AppartementDetailsFilePath,
-    settings.PastDuesFilePath,
-    settings.DuesInterestRatePerAnnum);
-
-IGeneratorEngine generator = serviceProvider.GetService<IGeneratorEngine>();
-generator.Execute(apps);
+// Code execution.
+serviceProvider.GetService<IGeneratorEngine>().Execute(
+    serviceProvider.GetService<IAppartementDetailsReader>().Execute());

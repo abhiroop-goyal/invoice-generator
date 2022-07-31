@@ -1,4 +1,6 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace InvoiceGenerator.Tests
 {
@@ -8,7 +10,9 @@ namespace InvoiceGenerator.Tests
         [TestMethod]
         public void AmountToWordsTest()
         {
-            DoubleToStringConverter converter = new DoubleToStringConverter(new ConsoleLogger());
+            DoubleToStringConverter converter = new DoubleToStringConverter(
+                new Mock<ILogger<DoubleToStringConverter>>().Object);
+
             Assert.IsTrue(converter.GetAmountInWords(0) == "Zero Rupees");
             Assert.IsTrue(converter.GetAmountInWords(0.05) == "Five Paise");
             Assert.IsTrue(converter.GetAmountInWords(0.5) == "Fifty Paise");

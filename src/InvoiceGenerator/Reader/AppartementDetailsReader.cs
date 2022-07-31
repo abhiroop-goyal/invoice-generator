@@ -2,6 +2,7 @@
 {
     using System;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using NPOI.SS.UserModel;
 
     /// <summary>
@@ -19,35 +20,34 @@
         /// </summary>
         private readonly ILogger<AppartementDetailsReader> Logger;
 
+        private InvoiceGeneratorSettings options;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AppartementDetailsReader"/> class.
         /// </summary>
         /// <param name="_logger">Logger class.</param>
         public AppartementDetailsReader(
             ILogger<AppartementDetailsReader> _logger,
+            IOptions<InvoiceGeneratorSettings> _options,
             IExcelUtilities excelUtilities)
         {
             this.Logger = _logger;
             this.excelUtilities = excelUtilities;
+            this.options = _options.Value;
         }
 
         /// <inheritdoc/>
-        public List<Appartement> Execute(
-            string inputFilePath,
-            string duesFilePath,
-            double interestRate)
+        public List<Appartement> Execute()
         {
             return this.CalculateSummary(
-                this.GetPastDues(duesFilePath),
-                this.GetAppartementDetails(inputFilePath),
-                interestRate);
+                this.GetPastDues(),
+                this.GetAppartementDetails());
         }
 
         /// <inheritdoc/>
         public List<Appartement> CalculateSummary(
             List<AppartementPenalty> dues,
-            List<Appartement> appartementDetails,
-            double interestRate)
+            List<Appartement> appartementDetails)
         {
             Dictionary<string, Appartement> appartementInfo =
                 appartementDetails
@@ -70,20 +70,20 @@
         }
 
         /// <inheritdoc/>
-        public List<AppartementPenalty> GetPastDues(string duesFilePath)
+        public List<AppartementPenalty> GetPastDues()
         {
             this.Logger.LogInformation("Reading data for past dues.");
             return this.excelUtilities.ParseExcelFile(
-                duesFilePath,
+                this.options.PastDuesFilePath,
                 this.ParseDuesRow);
         }
 
         /// <inheritdoc/>
-        public List<Appartement> GetAppartementDetails(string inputFilePath)
+        public List<Appartement> GetAppartementDetails()
         {
             this.Logger.LogInformation("Reading data of appartements from excel file.");
             return this.excelUtilities.ParseExcelFile<Appartement>(
-                inputFilePath,
+                this.options.AppartementDetailsFilePath,
                 this.ParseAppartementDetailsRow);
         }
 
