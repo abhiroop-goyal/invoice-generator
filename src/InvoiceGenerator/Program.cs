@@ -1,13 +1,18 @@
 ﻿using InvoiceGenerator;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 ServiceProvider serviceProvider = new ServiceCollection()
-            .AddSingleton<ILogger, ConsoleLogger>()
             .AddSingleton<IExcelUtilities, ExcelUtilities>()
             .AddSingleton<IAmountToWords, DoubleToStringConverter>()
             .AddSingleton<ISettingsProvider, JSONConfigSettingsProvider>()
             .AddSingleton<IGeneratorEngine, GeneratorEngine>()
             .AddSingleton<IAppartementDetailsReader, AppartementDetailsReader>()
+            .AddLogging((builder) =>
+            {
+                builder.ClearProviders();
+                builder.AddConsole();
+            })
             .BuildServiceProvider();
 
 InvoiceGeneratorSettings settings = serviceProvider.GetService<ISettingsProvider>().GetSettings();

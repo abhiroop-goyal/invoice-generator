@@ -1,13 +1,14 @@
 ﻿namespace InvoiceGenerator
 {
     using System;
+    using Microsoft.Extensions.Logging;
     using NPOI.SS.UserModel;
     using NPOI.XSSF.UserModel;
 
     /// <summary>
     /// Invoice generator engine.
     /// </summary>
-    internal class GeneratorEngine : BaseClass, IGeneratorEngine
+    internal class GeneratorEngine : IGeneratorEngine
     {
         /// <summary>
         /// Common generation settings.
@@ -25,6 +26,11 @@
         private readonly IExcelUtilities excelUtilities;
 
         /// <summary>
+        /// Logger interface.
+        /// </summary>
+        private readonly ILogger<GeneratorEngine> Logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GeneratorEngine"/> class.
         /// </summary>
         /// <param name="_settingsProvider">Parameters for generation.</param>
@@ -35,8 +41,9 @@
             ISettingsProvider _settingsProvider,
             IExcelUtilities _excelUtilities,
             IAmountToWords _rupeeWordConverter,
-            ILogger _logger) : base(_logger)
+            ILogger<GeneratorEngine> _logger)
         {
+            this.Logger = _logger;
             this.excelUtilities = _excelUtilities;
             this.rupeeWordConverter = _rupeeWordConverter;
             this.settings = _settingsProvider.GetSettings();
@@ -47,10 +54,10 @@
         {
             this.CloneTemplateFile();
             int invoiceNumber = settings.FirstInvoiceNumber;
-            this.Logger.LogInfo(
+            this.Logger.LogInformation(
                 $"Generating all Excel invoices at {this.settings.ExcelOutputDirectory}");
 
-            this.Logger.LogInfo(
+            this.Logger.LogInformation(
                 $"Generating all PDF invoices at {this.settings.PdfOutputDirectory}");
 
             int successfulInvoices = 0;
@@ -74,7 +81,7 @@
                 invoiceNumber++;
             }
 
-            this.Logger.LogInfo($"Successfully created {successfulInvoices} invoices.");
+            this.Logger.LogInformation($"Successfully created {successfulInvoices} invoices.");
             this.CleanupTemporaryTemplateFile();
         }
 
@@ -92,7 +99,7 @@
                 throw new Exception(errorMessage);
             }
 
-            this.Logger.LogInfo(
+            this.Logger.LogInformation(
                 $"Creating copy of template file for working {this.settings.IntermediateTemplateFilePath}");
 
             XSSFWorkbook workbook = this.excelUtilities.OpenExcelWorkbook(
@@ -110,7 +117,7 @@
         {
             if (File.Exists(settings.IntermediateTemplateFilePath))
             {
-                this.Logger.LogInfo($"Deleting temp file {this.settings.IntermediateTemplateFilePath}");
+                this.Logger.LogInformation($"Deleting temp file {this.settings.IntermediateTemplateFilePath}");
             }
 
             File.Delete(settings.IntermediateTemplateFilePath);

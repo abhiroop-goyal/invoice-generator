@@ -1,6 +1,8 @@
 ﻿namespace InvoiceGenerator
 {
-    public class DoubleToStringConverter : BaseClass, IAmountToWords
+    using Microsoft.Extensions.Logging;
+
+    public class DoubleToStringConverter : IAmountToWords
     {
         /// <summary>
         /// Dictionary for single digit.
@@ -23,11 +25,17 @@
         private readonly Dictionary<int, string> noOfZerosToString;
 
         /// <summary>
+        /// Logger interface.
+        /// </summary>
+        private readonly ILogger<DoubleToStringConverter> logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DoubleToStringConverter"/> class.
         /// </summary>
         /// <param name="_logger">Logger class.</param>
-        public DoubleToStringConverter(ILogger _logger) : base(_logger)
+        public DoubleToStringConverter(ILogger<DoubleToStringConverter> _logger)
         {
+            this.logger = _logger;
             this.onesDigit = new Dictionary<int, string>
             {
                 { 1, "One" },

@@ -1,21 +1,28 @@
 ﻿namespace InvoiceGenerator
 {
+    using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using System.Configuration;
 
     /// <summary>
     /// JSON File config settings provider.
     /// </summary>
-    internal class JSONConfigSettingsProvider : BaseClass, ISettingsProvider
+    internal class JSONConfigSettingsProvider : ISettingsProvider
     {
         private Dictionary<string, string>? items;
+
+        /// <summary>
+        /// Logger interface.
+        /// </summary>
+        private readonly ILogger<JSONConfigSettingsProvider> Logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JSONConfigSettingsProvider"/> class.
         /// </summary>
         /// <param name="_logger">Logger class.</param>
-        public JSONConfigSettingsProvider(ILogger _logger) : base(_logger)
+        public JSONConfigSettingsProvider(ILogger<JSONConfigSettingsProvider> _logger)
         {
+            this.Logger = _logger;
         }
 
         /// <summary>
@@ -29,7 +36,7 @@
             {
                 string message = $"Configuration file {filePath}, does not exist. " +
                     $"Make sure that the file exists before proceeding";
-                
+
                 this.Logger.LogError(message);
                 throw new Exception(message);
             }

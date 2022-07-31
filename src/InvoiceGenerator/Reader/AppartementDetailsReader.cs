@@ -1,12 +1,13 @@
 ﻿namespace InvoiceGenerator
 {
     using System;
+    using Microsoft.Extensions.Logging;
     using NPOI.SS.UserModel;
 
     /// <summary>
     /// Reader for details.
     /// </summary>
-    public class AppartementDetailsReader : BaseClass, IAppartementDetailsReader
+    public class AppartementDetailsReader : IAppartementDetailsReader
     {
         /// <summary>
         /// Excel utilities.
@@ -14,13 +15,19 @@
         private IExcelUtilities excelUtilities;
 
         /// <summary>
+        /// Logger interface.
+        /// </summary>
+        private readonly ILogger<AppartementDetailsReader> Logger;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="AppartementDetailsReader"/> class.
         /// </summary>
         /// <param name="_logger">Logger class.</param>
         public AppartementDetailsReader(
-            ILogger _logger,
-            IExcelUtilities excelUtilities) : base(_logger)
+            ILogger<AppartementDetailsReader> _logger,
+            IExcelUtilities excelUtilities)
         {
+            this.Logger = _logger;
             this.excelUtilities = excelUtilities;
         }
 
@@ -65,7 +72,7 @@
         /// <inheritdoc/>
         public List<AppartementPenalty> GetPastDues(string duesFilePath)
         {
-            this.Logger.LogInfo("Reading data for past dues.");
+            this.Logger.LogInformation("Reading data for past dues.");
             return this.excelUtilities.ParseExcelFile(
                 duesFilePath,
                 this.ParseDuesRow);
@@ -74,7 +81,7 @@
         /// <inheritdoc/>
         public List<Appartement> GetAppartementDetails(string inputFilePath)
         {
-            this.Logger.LogInfo("Reading data of appartements from excel file.");
+            this.Logger.LogInformation("Reading data of appartements from excel file.");
             return this.excelUtilities.ParseExcelFile<Appartement>(
                 inputFilePath,
                 this.ParseAppartementDetailsRow);

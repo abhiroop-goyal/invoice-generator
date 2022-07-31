@@ -2,20 +2,27 @@
 {
     using System.Collections;
     using System.Drawing.Printing;
+    using Microsoft.Extensions.Logging;
     using NPOI.SS.UserModel;
     using NPOI.XSSF.UserModel;
 
     /// <summary>
     /// Excel utilities.
     /// </summary>
-    public class ExcelUtilities : BaseClass, IExcelUtilities
+    public class ExcelUtilities : IExcelUtilities
     {
+        /// <summary>
+        /// Logger interface.
+        /// </summary>
+        private readonly ILogger<ExcelUtilities> Logger;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ExcelUtilities"/> class.
         /// </summary>
         /// <param name="_logger">Logger class.</param>
-        public ExcelUtilities(ILogger _logger) : base(_logger)
+        public ExcelUtilities(ILogger<ExcelUtilities> _logger)
         {
+            this.Logger = _logger;
         }
 
         /// <inheritdoc />
@@ -242,7 +249,7 @@
                     }
                 }
 
-                this.Logger.LogInfo(
+                this.Logger.LogInformation(
                     $"Successfully read data for {items.Count} rows.");
             }
             catch (Exception ex)
@@ -281,7 +288,7 @@
                 }
 
                 row = workSheet.CreateRow(rowNumber);
-                this.Logger.LogInfo($"Row {rowNumber} successfully created.");
+                this.Logger.LogInformation($"Row {rowNumber} successfully created.");
             }
 
             if (row.Cells.Count <= columnNumber)
@@ -297,7 +304,7 @@
                     row.CreateCell(colIndex);
                 }
 
-                this.Logger.LogInfo($"Cell {columnNumber} successfully created.");
+                this.Logger.LogInformation($"Cell {columnNumber} successfully created.");
             }
 
             return row.GetCell(columnNumber);
