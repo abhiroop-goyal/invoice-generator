@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Xunit;
 
 namespace InvoiceGenerator.Tests
 {
-    [TestClass]
-    public class ExcelUtilitiesTest
+    public class ExcelUtilitiesTest : IDisposable
     {
         /// <summary>
         /// Name of workbook.
@@ -33,27 +32,27 @@ namespace InvoiceGenerator.Tests
         private readonly ExcelUtilities utilities = new ExcelUtilities(
                 new Mock<ILogger<ExcelUtilities>>().Object);
 
-        [TestMethod]
+        [Fact]
         public void ReadAndWriteNumberTest()
         {
             wb = new XSSFWorkbook();
             ISheet sheet = wb.CreateSheet(SheetName);
             double value = DateTime.UtcNow.Ticks / 100.0;
             utilities.SetCellValue(sheet, 10, 5, value);
-            Assert.IsTrue(value == utilities.GetNumericalCellValue(sheet, 10, 5));
+            Assert.True(value == utilities.GetNumericalCellValue(sheet, 10, 5));
         }
 
-        [TestMethod]
+        [Fact]
         public void ReadAndWriteStringTest()
         {
             wb = new XSSFWorkbook();
             ISheet sheet = wb.CreateSheet(SheetName);
             string value = DateTime.UtcNow.DayOfWeek.ToString();
             utilities.SetCellValue(sheet, 10, 5, value);
-            Assert.IsTrue(value == utilities.GetStringCellValue(sheet, 10, 5));
+            Assert.True(value == utilities.GetStringCellValue(sheet, 10, 5));
         }
 
-        [TestMethod]
+        [Fact]
         public void SaveAndReadFileTest()
         {
             wb = new XSSFWorkbook();
@@ -64,10 +63,10 @@ namespace InvoiceGenerator.Tests
 
             wb = utilities.OpenExcelWorkbook(TempFileName);
             sheet = wb.GetSheet(SheetName);
-            Assert.IsTrue(value == utilities.GetNumericalCellValue(sheet, 10, 5));
+            Assert.True(value == utilities.GetNumericalCellValue(sheet, 10, 5));
         }
 
-        [TestMethod]
+        [Fact]
         public void ExcelFileParserTest()
         {
             List<ParserTestContract> items = new List<ParserTestContract>
@@ -113,15 +112,14 @@ namespace InvoiceGenerator.Tests
                 });
 
             parsedItems.Sort();
-            Assert.IsTrue(items.Count == parsedItems.Count, "Invalid number of items.");
+            Assert.True(items.Count == parsedItems.Count, "Invalid number of items.");
             for (int i = 0; i < parsedItems.Count; i++)
             {
-                Assert.IsTrue(parsedItems[i].Equals(items[i]));
+                Assert.True(parsedItems[i].Equals(items[i]));
             }
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        public void Dispose()
         {
             wb?.Close();
             if (File.Exists(TempFileName))

@@ -10,6 +10,14 @@
     /// </summary>
     public class DuesCalculatorReaderV2 : IDynamicDetailsReader
     {
+        private enum WellKnownColumns
+        {
+            Id,
+            Dues,
+            IsAdvancePaid
+        }
+
+        private readonly Dictionary<WellKnownColumns, int> wellKnownColumnIndex;
         private readonly IExcelUtilities excelUtilities;
         private readonly ILogger Logger;
         private readonly InvoiceGeneratorSettings options;
@@ -25,12 +33,21 @@
             IOptions<InvoiceGeneratorSettings> _options,
             IExcelUtilities excelUtilities)
         {
+            this.wellKnownColumnIndex = new Dictionary<WellKnownColumns, int>
+            {
+                { WellKnownColumns.Id, 0 },
+                { WellKnownColumns.Dues, 1 },
+                { WellKnownColumns.IsAdvancePaid, 2 },
+            };
+
             this.Logger = _logger;
             this.excelUtilities = excelUtilities;
             this.options = _options.Value;
             this.dynamicData = new Dictionary<string, AppartementDynamicData>();
             this.customCharges = new List<string>();
         }
+
+        private int PermanentColumnCount => this.wellKnownColumnIndex.Count;
 
         /// <inheritdoc/>
         public void EnrichDynamicData(Appartement data)
@@ -71,13 +88,13 @@
         /// <param name="row">Header row.</param>
         private void SetCustomChargesIfExist(IRow row)
         {
-            if (row.Cells.Count <= 2)
+            if (row.Cells.Count <= this.PermanentColumnCount)
             {
                 this.Logger.LogInformation($"No custom charges found in Dues sheet");
                 return;
             }
 
-            for (int i = 2; i < row.Cells.Count; i++)
+            for (int i = this.PermanentColumnCount; i < row.Cells.Count; i++)
             {
                 string header = this.excelUtilities.GetStringCellValue(row, i);
                 this.Logger.LogInformation("Found custom charge {charge}", header);
@@ -95,25 +112,33 @@
             int cellsInRow = row.Cells.Count;
             int customCharges = this.customCharges.Count();
 
-            if (cellsInRow < 2)
+            if (cellsInRow < this.PermanentColumnCount)
             {
                 this.Logger.LogError($"Invalid input in Row {row.RowNum}");
                 return null;
             }
 
-            string id = this.excelUtilities.GetStringCellValue(row, 0);
-            double dueAmount = this.excelUtilities.GetNumericalCellValue(row, 2);
+            string id = this.excelUtilities.GetStringCellValue(
+                row,
+                this.wellKnownColumnIndex[WellKnownColumns.Id]);
+
+            double dueAmount = this.excelUtilities.GetNumericalCellValue(
+                row,
+                this.wellKnownColumnIndex[WellKnownColumns.Dues]);
+
             bool isAdvancePaid = string.Equals(
-                this.excelUtilities.GetStringCellValue(row, 1),
-                "True",
+                this.excelUtilities.GetStringCellValue(
+                    row,
+                    this.wellKnownColumnIndex[WellKnownColumns.IsAdvancePaid]),
+                "Yes",
                 StringComparison.OrdinalIgnoreCase);
 
             Dictionary<string, double> customChargeDict = new Dictionary<string, double>();
-            for (int i = 0; i < customCharges && (i +2) < cellsInRow ; i++)
+            for (int i = 0; i < customCharges && (i + this.PermanentColumnCount) < cellsInRow; i++)
             {
-                customChargeDict.Add(
-                    this.customCharges[i], 
-                    this.excelUtilities.GetNumericalCellValue(row, i + 2));
+                // always adding charge for 0.0 case as well.
+                double charge = this.excelUtilities.GetNumericalCellValue(row, i + this.PermanentColumnCount);
+                customChargeDict.Add(this.customCharges[i], charge);
             }
 
             return new AppartementDynamicData(id, dueAmount, isAdvancePaid, customChargeDict);

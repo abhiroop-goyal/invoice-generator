@@ -17,6 +17,7 @@ ServiceProvider serviceProvider = new ServiceCollection()
             .AddSingleton<IAppartementDetailsReader, AppartementDetailsReader>()
             .AddSingleton<IDynamicDetailsReader, DuesCalculatorReaderV2>()
             .AddSingleton<IStaticDetailsReader, StaticAppartementDetailsReader>()
+            .AddSingleton<IReceiptGenerator, ReceiptGenerator>()
             .AddLogging((builder) =>
             {
                 builder.ClearProviders();

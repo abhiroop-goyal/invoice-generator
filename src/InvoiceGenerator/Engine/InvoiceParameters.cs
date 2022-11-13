@@ -3,7 +3,7 @@
     /// <summary>
     /// Parameters to generate an invoice.
     /// </summary>
-    internal class InvoiceParameters
+    public class InvoiceParameters
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="InvoiceParameters"/> class.

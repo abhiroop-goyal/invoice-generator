@@ -50,7 +50,7 @@
         /// <summary>
         /// Gets or sets past dues.
         /// </summary>
-        public double Dues { get; internal set; }
+        public double Dues { get; set; }
 
         /// <summary>
         /// Gets or sets past dues.
@@ -61,15 +61,5 @@
         /// Gets or sets Unique Appartement Id.
         /// </summary>
         public Dictionary<string, double> CustomCharges { get; }
-
-        /// <summary>
-        /// Sets <see cref="Appartement.Dues"/> object.
-        /// </summary>
-        /// <param name="due">Dues object.</param>
-        public void SetPastDues(AppartementPenalty due)
-        {
-            this.Dues = due.PastDueAmount;
-            this.NumberOfDaysForPenalty = due.NumberOfDays;
-        }
     }
 }

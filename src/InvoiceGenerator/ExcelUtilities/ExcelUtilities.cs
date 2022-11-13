@@ -11,10 +11,7 @@
     /// </summary>
     public class ExcelUtilities : IExcelUtilities
     {
-        /// <summary>
-        /// Logger interface.
-        /// </summary>
-        private readonly ILogger<ExcelUtilities> Logger;
+        private readonly ILogger Logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExcelUtilities"/> class.
