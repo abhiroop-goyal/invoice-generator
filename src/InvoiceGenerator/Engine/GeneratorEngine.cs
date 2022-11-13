@@ -62,12 +62,19 @@
                 $"Generating all PDF invoices at {this.settings.PdfOutputDirectory}");
 
             int successfulInvoices = 0;
+            int skippedInvoices = 0;
             foreach (Appartement appart in appartments)
             {
+
+                if (!this.IsInvoiceRequired(appart))
+                {
+                    skippedInvoices++;
+                    continue;
+                }
+
                 try
                 {
                     InvoiceParameters parameters = new InvoiceParameters(invoiceNumber, appart);
-
                     this.GenerateInvoiceForAppartement(parameters);
                     successfulInvoices++;
                 }
@@ -84,6 +91,23 @@
 
             this.Logger.LogInformation($"Successfully created {successfulInvoices} invoices.");
             this.CleanupTemporaryTemplateFile();
+        }
+
+        /// <inheritdoc/>
+        public bool IsInvoiceRequired(Appartement appartementDetails)
+        {
+            bool skipInvoice = appartementDetails.ChargePerUnit == 0 
+                && appartementDetails.Dues == 0 
+                && appartementDetails.CustomCharges.Count == 0;
+            
+            if (skipInvoice)
+            {
+                this.Logger.LogInformation(
+                    "Skipping invoice generation for {id} as there are no billable items.",
+                    appartementDetails.Id);
+            }
+
+            return !skipInvoice;
         }
 
         /// <summary>
@@ -170,23 +194,12 @@
 
             ISheet workSheet = workbook.GetSheetAt(0);
 
-            // Common Details of owner/appartement.
+            this.SetHeaderDetails(workSheet, parameters);
+            this.SetCommonItems(workSheet, parameters);
+            this.SetCustomCharges(workSheet, parameters);
 
-            this.excelUtilities.SetCellValue(workSheet, 9, 2, parameters.Details.Owner);
-            this.excelUtilities.SetCellValue(workSheet, 10, 2, parameters.Details.Occupant);
-            this.excelUtilities.SetCellValue(workSheet, 11, 2, parameters.Details.Id);
-
-            string invoiceNumber = string.Format(
-                this.settings.InvoiceNumberFormat,
-                parameters.InvoiceNumber);
-
-            this.excelUtilities.SetCellValue(workSheet, 9, 5, invoiceNumber);
-
-            // Calculation
-            this.excelUtilities.SetCellValue(workSheet, 15, 4, parameters.Details.SquareFootage);
-            this.excelUtilities.SetCellValue(workSheet, 15, 5, parameters.Details.ChargePerUnit);
-            this.excelUtilities.SetCellValue(workSheet, 20, 6, parameters.Details.Dues);
-            this.excelUtilities.SetCellValue(workSheet, 21, 3, parameters.Details.NumberOfDaysForPenalty);
+            // Changed pattern. Interest on dues comes via sheet.
+            //this.excelUtilities.SetCellValue(workSheet, 21, 3, parameters.Details.NumberOfDaysForPenalty);
 
             // required as formulae are not auto-evaluated.
             XSSFFormulaEvaluator.EvaluateAllFormulaCells(workbook);
@@ -206,6 +219,39 @@
 
             this.excelUtilities.SetCellValue(workSheet, 25, 2, amountInWords);
             this.excelUtilities.SaveAndCloseExcelFile(workbook, outFilePath);
+        }
+
+        private void SetHeaderDetails(ISheet workSheet, InvoiceParameters parameters)
+        {
+            // Common Details of owner/appartement.
+
+            this.excelUtilities.SetCellValue(workSheet, 9, 2, parameters.Details.Owner);
+            this.excelUtilities.SetCellValue(workSheet, 10, 2, parameters.Details.Occupant);
+            this.excelUtilities.SetCellValue(workSheet, 11, 2, parameters.Details.Id);
+
+            string invoiceNumber = string.Format(
+                this.settings.InvoiceNumberFormat,
+                parameters.InvoiceNumber);
+
+            this.excelUtilities.SetCellValue(workSheet, 9, 5, invoiceNumber);
+        }
+
+        private void SetCommonItems(ISheet workSheet, InvoiceParameters parameters)
+        {
+            this.excelUtilities.SetCellValue(workSheet, 15, 4, parameters.Details.SquareFootage);
+            this.excelUtilities.SetCellValue(workSheet, 15, 5, parameters.Details.ChargePerUnit);
+            this.excelUtilities.SetCellValue(workSheet, 18, 6, parameters.Details.Dues);
+        }
+
+        private void SetCustomCharges(ISheet workSheet, InvoiceParameters parameters)
+        {
+            int customChargeStartingRow = 16;
+            foreach (var charge in parameters.Details.CustomCharges)
+            {
+                this.excelUtilities.SetCellValue(workSheet, customChargeStartingRow, 1, charge.Key);
+                this.excelUtilities.SetCellValue(workSheet, customChargeStartingRow, 6, charge.Value);
+                customChargeStartingRow++;
+            }
         }
     }
 }

@@ -34,7 +34,10 @@
         /// <param name="inputFilePath">Input file path.</param>
         /// <param name="parsingFunction">Parsing function.</param>
         /// <exception cref="Exception">File not found.</exception>
-        List<T> ParseExcelFile<T>(string inputFilePath, Func<IRow, T> parsingFunction);
+        List<T> ParseExcelFile<T>(
+            string inputFilePath, 
+            Func<IRow, T> parsingFunction,
+            Action<IRow>? firstRowCallback = null);
 
         /// <summary>
         /// Set cell value.

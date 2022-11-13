@@ -226,8 +226,12 @@
         /// <returns>A list of appartements.</returns>
         /// <param name="inputFilePath">Input file path.</param>
         /// <param name="parsingFunction">Parsing function.</param>
+        /// <param name="firstRowCallback">First row callback.</param>
         /// <exception cref="Exception">File not found.</exception>
-        public List<T> ParseExcelFile<T>(string inputFilePath, Func<IRow, T> parsingFunction)
+        public List<T> ParseExcelFile<T>(
+            string inputFilePath,
+            Func<IRow, T> parsingFunction,
+            Action<IRow>? firstRowCallback = null)
         {
             List<T> items = new List<T>();
             IWorkbook? workbook = this.OpenExcelWorkbook(inputFilePath);
@@ -236,8 +240,14 @@
             {
                 ISheet workSheet = workbook.GetSheetAt(0);
                 IEnumerator rowIterator = workSheet.GetRowEnumerator();
-                // skip header
+
+                // point to header.
                 rowIterator.MoveNext();
+
+                if (firstRowCallback != null)
+                {
+                    firstRowCallback((IRow)rowIterator.Current);
+                }
 
                 while (rowIterator.MoveNext())
                 {

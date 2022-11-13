@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-
 string configFileName = args[0];
 
 // Dependency builder.
@@ -16,6 +15,8 @@ ServiceProvider serviceProvider = new ServiceCollection()
             .AddSingleton<IAmountToWords, DoubleToStringConverter>()
             .AddSingleton<IGeneratorEngine, GeneratorEngine>()
             .AddSingleton<IAppartementDetailsReader, AppartementDetailsReader>()
+            .AddSingleton<IDynamicDetailsReader, DuesCalculatorReaderV2>()
+            .AddSingleton<IStaticDetailsReader, StaticAppartementDetailsReader>()
             .AddLogging((builder) =>
             {
                 builder.ClearProviders();
@@ -26,5 +27,5 @@ ServiceProvider serviceProvider = new ServiceCollection()
             .BuildServiceProvider();
 
 // Code execution.
-serviceProvider.GetService<IGeneratorEngine>().Execute(
-    serviceProvider.GetService<IAppartementDetailsReader>().Execute());
+serviceProvider.GetRequiredService<IGeneratorEngine>().Execute(
+    serviceProvider.GetRequiredService<IAppartementDetailsReader>().Execute());
