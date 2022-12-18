@@ -55,7 +55,17 @@
         /// <summary>
         /// Gets or sets past dues.
         /// </summary>
+        public double InterestOnDues { get; set; }
+
+        /// <summary>
+        /// Gets or sets past dues.
+        /// </summary>
         public double NumberOfDaysForPenalty { get; internal set; }
+
+        /// <summary>
+        /// Gets or sets the virtual account number.
+        /// </summary>
+        public string VirtualAccount { get; internal set; }
 
         /// <summary>
         /// Gets or sets Unique Appartement Id.

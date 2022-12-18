@@ -10,11 +10,13 @@
         /// </summary>
         /// <param name="appNumber">Appartement number.</param>
         /// <param name="pastDueAmount">Past due amount.</param>
+        /// <param name="interestOnDues">Interest on dues.</param>
         /// <param name="isAdvancePaid">Is Advance paid.</param>
         /// <param name="customCharges">Custom charge.</param>
         public AppartementDynamicData(
             string appNumber,
             double pastDueAmount,
+            double interestOnDues,
             bool isAdvancePaid,
             Dictionary<string,double> customCharges)
         {
@@ -22,6 +24,7 @@
             this.PastDueAmount = pastDueAmount;
             this.CustomCharges = customCharges;
             this.IsAdvancePaid = isAdvancePaid;
+            this.InterestOnPastDueAmount = interestOnDues;
         }
 
         /// <summary>
@@ -38,6 +41,11 @@
         /// Gets or sets Unique Appartement Id.
         /// </summary>
         public double PastDueAmount { get; }
+
+        /// <summary>
+        /// Gets or sets Unique Appartement Id.
+        /// </summary>
+        public double InterestOnPastDueAmount { get; }
 
         /// <summary>
         /// Gets or sets Unique Appartement Id.

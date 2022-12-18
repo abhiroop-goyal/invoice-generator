@@ -8,27 +8,6 @@ namespace InvoiceGenerator
     public class InvoiceGeneratorSettings
     {
         /// <summary>
-        /// Create output directories if they dont exist.
-        /// </summary>
-        public void CreateDirectories()
-        {
-            if (!Directory.Exists(this.OutputDirectory))
-            {
-                Directory.CreateDirectory(this.OutputDirectory);
-            }
-
-            if (!Directory.Exists(this.ExcelOutputDirectory))
-            {
-                Directory.CreateDirectory(this.ExcelOutputDirectory);
-            }
-
-            if (!Directory.Exists(this.PdfOutputDirectory))
-            {
-                Directory.CreateDirectory(this.PdfOutputDirectory);
-            }
-        }
-
-        /// <summary>
         /// Gets or sets firsst receipt number.
         /// </summary>
         public int FirstInvoiceNumber { get; set; }

@@ -66,6 +66,11 @@
         {
             Spire.Xls.Workbook workbook = new Spire.Xls.Workbook();
             workbook.LoadFromFile(inputFilePath);
+
+            var sheet = workbook.Worksheets.First();
+            sheet.PageSetup.FitToPagesWide = 1;
+            sheet.PageSetup.FitToPagesTall = 0;
+
             PrintDocument pd = workbook.PrintDocument;
 
 #pragma warning disable CA1416 // Validate platform compatibility

@@ -120,6 +120,7 @@
             this.SetHeaderDetails(workSheet, parameters);
             this.SetCommonItems(workSheet, parameters);
             this.SetCustomCharges(workSheet, parameters);
+            this.SetFooter(workSheet, parameters);
 
             // Changed pattern. Interest on dues comes via sheet.
             //this.excelUtilities.SetCellValue(workSheet, 21, 3, parameters.Details.NumberOfDaysForPenalty);
@@ -144,6 +145,11 @@
             this.excelUtilities.SaveAndCloseExcelFile(workbook, outFilePath);
         }
 
+        private void SetFooter(ISheet workSheet, InvoiceParameters parameters)
+        {
+            this.excelUtilities.SetCellValue(workSheet, 32, 2, parameters.Details.VirtualAccount);
+        }
+
         private void SetHeaderDetails(ISheet workSheet, InvoiceParameters parameters)
         {
             // Common Details of owner/appartement.
@@ -163,7 +169,8 @@
         {
             this.excelUtilities.SetCellValue(workSheet, 15, 4, parameters.Details.SquareFootage);
             this.excelUtilities.SetCellValue(workSheet, 15, 5, parameters.Details.ChargePerUnit);
-            this.excelUtilities.SetCellValue(workSheet, 18, 6, parameters.Details.Dues);
+            this.excelUtilities.SetCellValue(workSheet, 18, 6, parameters.Details.InterestOnDues);
+            this.excelUtilities.SetCellValue(workSheet, 26, 6, parameters.Details.Dues);
         }
 
         private void SetCustomCharges(ISheet workSheet, InvoiceParameters parameters)

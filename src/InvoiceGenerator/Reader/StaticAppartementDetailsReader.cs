@@ -55,7 +55,10 @@
                 owner: this.excelUtilities.GetStringCellValue(row, 1),
                 occupant: this.excelUtilities.GetStringCellValue(row, 2),
                 squareFootage: this.excelUtilities.GetNumericalCellValue(row, 3),
-                chargePerUnit: this.excelUtilities.GetNumericalCellValue(row, 4));
+                chargePerUnit: this.excelUtilities.GetNumericalCellValue(row, 4))
+            {
+                VirtualAccount = this.excelUtilities.GetStringCellValue(row, 5)
+            };
         }
     }
 }

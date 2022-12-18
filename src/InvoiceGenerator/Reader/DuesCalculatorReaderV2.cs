@@ -14,6 +14,7 @@
         {
             Id,
             Dues,
+            InterestOnDues,
             IsAdvancePaid
         }
 
@@ -37,7 +38,8 @@
             {
                 { WellKnownColumns.Id, 0 },
                 { WellKnownColumns.Dues, 1 },
-                { WellKnownColumns.IsAdvancePaid, 2 },
+                { WellKnownColumns.InterestOnDues, 2 },
+                { WellKnownColumns.IsAdvancePaid, 3 },
             };
 
             this.Logger = _logger;
@@ -60,6 +62,7 @@
             var item = this.dynamicData[data.Id];
 
             data.Dues = item.PastDueAmount;
+            data.InterestOnDues = item.InterestOnPastDueAmount;
             item.CustomCharges.Keys
                 .ToList()
                 .ForEach(key => data.CustomCharges.Add(key, item.CustomCharges[key]));
@@ -126,6 +129,10 @@
                 row,
                 this.wellKnownColumnIndex[WellKnownColumns.Dues]);
 
+            double interest = this.excelUtilities.GetNumericalCellValue(
+                row,
+                this.wellKnownColumnIndex[WellKnownColumns.InterestOnDues]);
+
             bool isAdvancePaid = string.Equals(
                 this.excelUtilities.GetStringCellValue(
                     row,
@@ -141,7 +148,7 @@
                 customChargeDict.Add(this.customCharges[i], charge);
             }
 
-            return new AppartementDynamicData(id, dueAmount, isAdvancePaid, customChargeDict);
+            return new AppartementDynamicData(id, dueAmount, interest, isAdvancePaid, customChargeDict);
         }
     }
 }
