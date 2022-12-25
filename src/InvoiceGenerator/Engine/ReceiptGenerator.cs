@@ -162,7 +162,7 @@
                 this.settings.InvoiceNumberFormat,
                 parameters.InvoiceNumber);
 
-            this.excelUtilities.SetCellValue(workSheet, 9, 5, invoiceNumber);
+            this.excelUtilities.SetCellValue(workSheet, 9, 6, invoiceNumber);
         }
 
         private void SetCommonItems(ISheet workSheet, InvoiceParameters parameters)
