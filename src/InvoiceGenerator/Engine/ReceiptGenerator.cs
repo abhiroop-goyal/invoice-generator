@@ -147,7 +147,7 @@
 
         private void SetFooter(ISheet workSheet, InvoiceParameters parameters)
         {
-            this.excelUtilities.SetCellValue(workSheet, 32, 3, parameters.Details.VirtualAccount);
+            this.excelUtilities.SetCellValue(workSheet, 31, 3, parameters.Details.VirtualAccount);
         }
 
         private void SetHeaderDetails(ISheet workSheet, InvoiceParameters parameters)
