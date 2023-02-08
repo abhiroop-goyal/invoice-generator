@@ -1,9 +1,9 @@
 ﻿{
-  "AppartementDetailsFilePath": "D:\\invoice-generator\\src\\Samples\\AppDetails.xlsx",
-  "PastDuesFilePath": "D:\\invoice-generator\\src\\Samples\\PastDuesV2.xlsx",
-  "TemplateFilePath": "D:\\invoice-generator\\src\\Samples\\MasterTemplateV2.xlsx",
+  "AppartementDetailsFilePath": "D:\\invoice-generator\\src\\Samples\\Special\\AppDetails.xlsx",
+  "PastDuesFilePath": "D:\\invoice-generator\\src\\Samples\\Special\\PastDues.xlsx",
+  "TemplateFilePath": "D:\\invoice-generator\\src\\Samples\\Special\\MasterTemplateV2.xlsx",
   "OutputDirectory": "D:\\invoice-generator\\src\\Output",
-  "FirstInvoiceNumber": "363",
+  "FirstInvoiceNumber": "656",
   "DuesInterestRatePerAnnum": "10",
   "InvoiceNumberFormat": "Cam/22-23/{0}"
 }
