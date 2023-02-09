@@ -3,7 +3,7 @@
   "PastDuesFilePath": "D:\\invoice-generator\\src\\Samples\\Special\\PastDues.xlsx",
   "TemplateFilePath": "D:\\invoice-generator\\src\\Samples\\Special\\MasterTemplateV2.xlsx",
   "OutputDirectory": "D:\\invoice-generator\\src\\Output",
-  "FirstInvoiceNumber": "656",
+  "FirstInvoiceNumber": "1",
   "DuesInterestRatePerAnnum": "10",
-  "InvoiceNumberFormat": "Cam/22-23/{0}"
+  "InvoiceNumberFormat": "SPF/22-23/{0}"
 }
