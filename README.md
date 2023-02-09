@@ -36,14 +36,12 @@ This contains information regarding each appartement. Changes to this file are e
 This contains information which changes for each billing cycle for each appartment.
 Examples are previous dues,  penalty and any special charges.
 To add a special charge, please create a new column in this file at the end of the table.
-The column header will be added in the invoice.
+The column header will be added in the invoice
 
-####Ideal Process
+##Process
                     
-```seq
-User-->AppartementDetails.xlsx: Update Resident information (if any)
-User->Dues.xlsx: Create Dues file with due amount and penalties.
-User-->Template.xlsx: Update template invoice (due date, period etc)
-User->Config: Update first invoice number and/or format.
-User-->Tool: Run the tool.
-```
+- AppartementDetails.xlsx: Update Resident information (if any)
+- Dues.xlsx: Create Dues file with due amount and penalties.
+- Template.xlsx: Update template invoice (due date, period etc)
+- Config: Update first invoice number and/or format.
+- Tool: Run the tool.
