@@ -13,9 +13,9 @@ test:
 		--collect:"XPlat Code Coverage" \
 	    --results-directory ./TestResults
 
-	reportgenerator \
+	dotnet tool run reportgenerator \
 	    -reports:./TestResults/**/coverage.cobertura.xml \
-	    -targetdir:./CoverageReport \
+	    -targetdir:./out/coveragereport \
 	    -reporttypes:Html;lcov
 	
 publish:
