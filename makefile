@@ -10,9 +10,13 @@ build:
 
 test:
 	dotnet test --no-build --no-restore \
-		/p:CollectCoverage=true \
-		/p:CoverletOutput=TestResults/coverage.info \
-		/p:CoverletOutputFormat=lcov
+		--collect:"XPlat Code Coverage" \
+	    --results-directory ./TestResults
+
+	reportgenerator \
+	    -reports:./TestResults/**/coverage.cobertura.xml \
+	    -targetdir:./CoverageReport \
+	    -reporttypes:Html;lcov
 	
 publish:
 	dotnet publish src/MyApp/MyApp.csproj -c Release -o out
