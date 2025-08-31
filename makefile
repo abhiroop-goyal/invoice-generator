@@ -4,6 +4,7 @@ all: restore build test
 
 restore:
 	dotnet restore
+	dotnet tool restore
 
 build:
 	dotnet build --no-restore
