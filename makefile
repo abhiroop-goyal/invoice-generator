@@ -3,6 +3,7 @@
 all: restore build test
 
 setup:
+	dotnet nuget locals all --clear
 	dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.*
 
 restore:
