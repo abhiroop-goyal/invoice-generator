@@ -1,6 +1,4 @@
-.PHONY: build test coverage clean restore publish
-
-all: restore build test
+.PHONY: setup build test coverage clean restore publish
 
 setup:
 	dotnet tool restore
@@ -16,6 +14,7 @@ test:
 		--collect:"XPlat Code Coverage" \
 	    --results-directory ./out/TestResults
 
+coverage:
 	dotnet tool run reportgenerator \
 	    -reports:./out/TestResults/**/coverage.cobertura.xml \
 	    -targetdir:./out/coveragereport \

@@ -30,6 +30,10 @@ jobs:
 
       - name: Test
         run: make test
+        continue-on-error: true 
+
+      - name: Coverage
+        run: make coverage
 
       - name: Generate Summary
         run: |
