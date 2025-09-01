@@ -2,9 +2,11 @@
 
 all: restore build test
 
+setup:
+	dotnet tool install --global dotnet-reportgenerator-globaltool --version 5.*
+
 restore:
 	dotnet restore
-	dotnet tool restore
 
 build:
 	dotnet build --no-restore
