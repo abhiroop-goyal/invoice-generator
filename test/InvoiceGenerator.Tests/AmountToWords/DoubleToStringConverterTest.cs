@@ -12,7 +12,7 @@ namespace InvoiceGenerator.Tests
         [Fact]
         public void GetAmountInWords_Zero_CorrectResult()
         {
-            Assert.Equal("Zero Rupees", this.converter.GetAmountInWords(0));
+            Assert.Equal("Zero Rupee", this.converter.GetAmountInWords(0));
         }
 
         [Fact]
