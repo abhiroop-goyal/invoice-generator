@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Restore",
+      "type": "shell",
+      "command": "make",
+      "args": ["restore"],
+      "group": "restore"
+    },
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "make",
+      "args": ["build"],
+      "group": "build"
+    },
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "make",
+      "args": ["test"],
+      "group": "test"
+    }
+  ]
+}
