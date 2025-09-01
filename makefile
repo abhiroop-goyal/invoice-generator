@@ -19,7 +19,7 @@ test:
 	dotnet tool run reportgenerator \
 	    -reports:./TestResults/**/coverage.cobertura.xml \
 	    -targetdir:./out/coveragereport \
-	    -reporttypes:Html;lcov
+	    -reporttypes:"Html;lcov"
 	
 publish:
 	dotnet publish src/MyApp/MyApp.csproj -c Release -o out
