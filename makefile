@@ -14,12 +14,12 @@ build:
 test:
 	dotnet test --no-build --no-restore \
 		--collect:"XPlat Code Coverage" \
-	    --results-directory ./TestResults
+	    --results-directory ./out/TestResults
 
 	dotnet tool run reportgenerator \
-	    -reports:./TestResults/**/coverage.cobertura.xml \
+	    -reports:./out/TestResults/**/coverage.cobertura.xml \
 	    -targetdir:./out/coveragereport \
-	    -reporttypes:"Html;lcov"
+	    -reporttypes:"TextSummary;Html;lcov"
 	
 publish:
 	dotnet publish src/MyApp/MyApp.csproj -c Release -o out
